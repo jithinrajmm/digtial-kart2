@@ -1,0 +1,149 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block adminbase %}
+{% block css %}
+<style>
+
+input[type='file'] {
+  color: rgba(0, 0, 0, 0);
+
+}
+input[type=file]::file-selector-button {
+  border: 2px solid #e7e55c;
+  padding: .2em .4em;
+  border-radius: .2em;
+  background-color: rgb(209,161,14);
+  transition: 1s;
+}
+.hide{
+  display: none;
+}
+  .product_name{
+    color: black;
+    font-weight: bolder;
+    font-size: 15px;
+    position: absolute;
+ 
+  }
+  .asteriskField {
+    display: none;
+}
+  .product_name:hover{
+    color: rgb(209, 209, 5);
+    text-decoration: none;
+    font-size: 17px;
+    cursor: w-resize;
+  }
+  label{
+    color: white;
+  }
+  .alert-error{
+    background-color: rgba(255, 0, 0, 0.377);
+  }
+</style>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+{% endblock css %}
+  
+{% include "base/sidebar.html" %}
+
+<main class="main-content position-relative border-radius-lg " style="height: 100vh;">
+    {% include "base/nav.html" %}
+    {% block pagename %}
+    <b>CATEGORY OFFER UPDATE</b> 
+  {% endblock pagename %}
+
+
+
+    <div class="row justify-content-center">
+              {% if messages %}
+                    
+
+              {% for message in messages %}
+            
+                <div class="alert col-md-4 alert-{{ message.tags }} text-center" role="alert">
+                      {{ message }}
+                </div>
+
+              {% endfor %}
+                  
+                    
+              {% endif %}
+             
+            
+                {% block errorss %}
+
+                  {% if error %}
+                  <script type="text/javascript">
+                    $(window).on('load', function() {
+                        $('#adding_offer').modal('show');
+                    });
+                  </script>
+                    {% endif %}
+
+                  {% endblock errorss %}
+             
+
+            
+
+              
+    </div>
+
+
+    <div class="container-fluid py-4 "  style="height: 100vh;">
+      <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-primary shadow-primary border-radius-lg p-4 pb-3" style="display: flex; justify-content: space-between; ">
+                  <div style="">
+                    <a href="" data-toggle="modal" data-target="#adding_offer" class="btn btn-dark m-0"><b>+</b></a>
+                  </div>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="row justify-content-center">
+                <div class="col-md-4 p-5 bg-dark" style="border-radius: 15px;">
+                  <form action="" method="POST">
+                    {% csrf_token %}
+                  {{form|crispy}}
+                  <div class="row justify-content-center">
+                    <div class="col-md-6">
+                      <button type="submit" class="btn btn-warning  text-center" >ADD PRODUCT</button>
+                    </div>
+                  </div>
+
+                </form>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+        
+    </div>
+    {% include "base/footer.html" %}
+  </main>
+
+
+<!-- Modal view and adding offer modaal -->
+
+
+<!-- Modal -->
+
+
+<!-- this is the script for user management -->
+  {% block scripts %}
+  
+  
+  <script src="{% static 'admin/js/productmanagement/productmanagement.js'%}" defer></script>
+
+  {% endblock scripts %}
+
+
+
+
+  {% endblock adminbase %}

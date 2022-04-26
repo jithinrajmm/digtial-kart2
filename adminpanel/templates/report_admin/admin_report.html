@@ -1,0 +1,345 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block adminbase %}
+{% block css %}
+<style>
+
+input[type='file'] {
+  color: rgba(0, 0, 0, 0);
+
+}
+input[type=file]::file-selector-button {
+  border: 2px solid #e7e55c;
+  padding: .2em .4em;
+  border-radius: .2em;
+  background-color: rgb(209,161,14);
+  transition: 1s;
+}
+.hide{
+  display: none;
+}
+  .product_name{
+    color: black;
+    font-weight: bolder;
+    font-size: 15px;
+    position: absolute;
+ 
+  }
+  .asteriskField {
+    display: none;
+} 
+#id_payment__status,#id_methods,#id_product__product_name,#id_product__category,#id_product_price__lt,#id_product_price__gt,#date-time-edit,#id_created_at__gt,#id_release_year{
+  background-color:#FFD333;
+}
+#id_created_at,#id_created_at__lt,#id_release_year__gt,#id_release_year__lt{
+  background-color:#FFD333;
+}
+
+  .product_name:hover{
+    color: rgb(209, 209, 5);
+    text-decoration: none;
+    font-size: 17px;
+    cursor: w-resize;
+  }
+  label{
+    color: white;
+  }
+  .alert-error{
+    background-color: rgba(255, 0, 0, 0.377);
+  }
+  #coupon:hover{
+    color: black;
+  }
+</style>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+  
+<!-- <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script> -->
+
+{% endblock css %}
+  
+
+
+<main class="main-content position-relative border-radius-lg " style="height: 100vh;">
+    {% include "base/nav.html" %}
+
+
+    {% block pagename %}
+    <b>ADMIN REPORT</b> 
+  {% endblock pagename %}
+
+  
+
+
+    <div class="row justify-content-center mt-5">
+              {% if messages %}
+                    
+
+              {% for message in messages %}
+            
+                <div class="alert col-md-4 alert-{{ message.tags }} text-center" role="alert">
+                      {{ message }}
+                </div>
+
+              {% endfor %}
+                  
+                    
+              {% endif %}
+    </div>
+
+
+<div class="container-fluid "  style="">
+
+ 
+
+  
+      <div class="row text-center">
+
+
+         <!-- testing jithin -->
+
+        
+            <div class="col-md-3 p-3 bg-dark" style=" border-radius: 15px;">
+
+
+
+              <div class="card bg-dark">
+                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                              <div class="bg-gradient-primary shadow-primary border-radius-lg p-4 pb-3" style="display: flex; justify-content:center; ">
+                                <h5> CHOOSE YOUR OPTIONS <a href="{% url 'adminhome' %}"><i class="fa-solid fa-house-user"></i></a></h5>
+
+                              </div>
+                        </div>
+                        <div class="card-body  bg-dark">
+
+
+                                  <form action="" method="get">
+                                    <div class="row">
+                                      <div class="col-md-6 ">
+                                        {{filter.form.payment__status|as_crispy_field }}
+                                        
+                                      </div>
+                                      <div class="col-md-6 ">
+                                        {{filter.form.methods|as_crispy_field }}
+                                        
+                                      </div>
+                                    </div>
+
+                                    <div class="row">
+                                      <div class="col-md-6 ">
+                                        {{filter.form.product__product_name|as_crispy_field }}
+                                        
+                                      </div>
+                                      <div class="col-md-6">
+                                        {{filter.form.product__category|as_crispy_field }}
+                                        
+                                      </div>
+                                    </div>
+
+                                    <div class="row">
+                                      <div class="col-md-6 ">
+                                        {{filter.form.product_price__lt|as_crispy_field }}
+                                        
+                                      </div>
+                                      <div class="col-md-6 ">
+                                        {{filter.form.product_price__gt|as_crispy_field }}
+                                        
+                                      </div>
+                                    </div>
+
+                                    <div class="row">
+                                      <div class="col-md-12 ">
+                                        {{ filter.form.created_at|as_crispy_field }}
+                                      </div>
+                      
+                                    </div>
+
+                                    
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        {{filter.form.created_at__gt|as_crispy_field }}
+                                        
+                                        
+                                      </div>
+                                      <div class="col-md-6 ">
+                                        
+                                        {{filter.form.created_at__lt|as_crispy_field }}
+                                        
+                                      </div>
+                                    </div>
+
+
+                                    <div class="row">
+                                      <div class="col-md-12 ">
+                                        
+                                        {{filter.form.release_year|as_crispy_field }}
+                                        
+                                      </div>
+                                    </div>
+
+                                    <div class="row">
+                                      <div class="col-md-6 ">
+                                        {{filter.form.release_year__gt|as_crispy_field }}
+                                      </div>
+                                      <div class="col-md-6 ">
+                                        {{filter.form.release_year__lt|as_crispy_field }}
+                                      </div>
+                                    </div>
+
+                                    
+
+                                    
+                                    
+                                    
+
+
+                                  <button class="btn btn-warning"> SEARCH </button>
+                                </form>
+                    
+                        </div>
+              </div>
+              
+            </div>
+
+
+            <div class="col-md-9">
+            <div class="card ">
+                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                              <div class="bg-gradient-primary shadow-primary border-radius-lg p-4 pb-3" style="display: flex; gap: 12px; ">
+                                  <div style="">
+                                      <a href="?pdf='pdf'" class="btn btn-dark m-0"><b>PDF</b></a>
+                                  </div>
+                                  <div style="">
+                                    <a href="?csv='csv'" id="csv_id" class="btn btn-dark m-0"><b>CSV</b></a>
+                                </div>
+                              </div>
+                        </div>
+                        <div class="card-body px-0 pb-2">
+                        <div class="table-responsive p-5">
+                            <table id="table" class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>ORDER NUMBER </b></th>
+                                <th class="text-uppercase  text-center text-secondary text-xxs font-weight-bolder opacity-7"><b>PRODUCT NAME</b></th>
+                                <th class="text-uppercase text-center text-secondary text-xxs font-weight-bolder opacity-7"><b>PAYMENT STATUS</b></th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>PAYMENT METHOD</b></th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>CATEGORY </b></th>
+                                <th class="text-uppercase text-center text-secondary text-xxs font-weight-bolder opacity-7"><b>ORDER AMOUNT</b></th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Valid to</b></th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Discount % </b></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                  
+                 
+
+                                {% for order in  filter_query_set %}
+                                <tr>
+                                    <td>
+                                    
+                                    <p class="text-xs text-center font-weight-bold mb-0">{{ forloop.counter }}</p>
+                                    </td>
+                                    <td>
+                                    <p class="text-xs text-center font-weight-bold mb-0">{{order.product.product_name}}</p>
+                                    </td>
+
+                                    <td>
+                                    <p class="text-xs text-center font-weight-bold mb-0">{{order.payment.status}}</p>
+                                    </td>
+
+                                    <td>
+                                    <p class="text-xs text-center font-weight-bold mb-0">{{order.payment.payment_method}}</p>
+                                    </td>
+
+                                    <td>
+                                    <p class="text-xs text-center font-weight-bold mb-0">{{order.product.category.category_name}}</p>
+                                    </td>
+
+                                    <td>
+                                      <p class="text-xs text-center font-weight-bold mb-0">{{order.product_price}}</p>
+                                    </td>
+
+                                    <td>
+                                      <p class="text-xs text-center font-weight-bold mb-0">{{order.created_at|date}}</p>
+                                    </td>
+
+                                    
+                                    <td>
+                                      <p class="text-xs text-center font-weight-bold mb-0">{{order.created_at|date:"M"}}</p>
+                                    </td>
+
+                
+                                    
+                                
+ 
+                                    
+                                    
+                                    
+                                
+                                </tr>
+                                
+                                {% endfor %}
+                            
+                            </tbody>
+                            </table>
+                        </div>
+                        </div>
+            </div>
+            </div>
+      </div>
+
+        
+</div>
+
+  </main>
+
+
+<!-- Modal view and update modaal -->
+
+<!-- this is the script for user management -->
+  {% block scripts %}
+  
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/af-2.3.0/b-1.5.2/b-colvis-1.5.2/b-flash-1.5.2/b-html5-1.5.2/b-print-1.5.2/cr-1.5.0/fh-3.1.4/r-2.2.2/datatables.min.css"/>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/af-2.3.0/b-1.5.2/b-colvis-1.5.2/b-flash-1.5.2/b-html5-1.5.2/b-print-1.5.2/cr-1.5.0/fh-3.1.4/r-2.2.2/datatables.min.js"></script>
+  <!-- needed to use moment.js for  date sorting-->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
+  <Script>
+  
+    $(document).ready( function () {
+  
+  $.fn.dataTable.moment( 'MMM D, YYYY' );
+  $.fn.dataTable.moment( 'D-MMM-YY' );
+  $('#table').DataTable({
+  
+  dom: 'B<"clear">lfrtip',
+  buttons: {
+      name: 'primary',
+      buttons: [ 'copy', 'csv', 'excel', 'pdf' ]
+  
+      }}
+  );
+  });
+
+  // testing for the window.location.search
+  function csvFunction(){
+    const urlcsv = window.location.search
+    const urlhref =  document.getElementById('csv_id').href 
+    document.getElementById('csv_id').href = urlcsv+urlhref
+    
+  }
+  </Script>
+  
+
+  {% endblock scripts %}
+
+
+
+
+  {% endblock adminbase %}

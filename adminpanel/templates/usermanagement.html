@@ -1,0 +1,162 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block adminbase %}
+  
+{% include "base/sidebar.html" %}
+
+<main class="main-content position-relative  h-100 border-radius-lg " style="height: 100%;">
+    {% include "base/nav.html" %}
+    {% block pagename %}
+    <b>USER MANAGEMENT</b> 
+  {% endblock pagename %}
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                <h6 class="text-white text-capitalize ps-3">USERS..</h6>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">User Name</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Last login</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for user in  users %}
+                    <tr>
+                        <td>
+                          <div class="d-flex px-2 py-1">
+                            <div>
+ 
+                              <img src="{{user.profile.profile_pic.url}}" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                      
+                              
+                            </div>
+                            <div class="d-flex flex-column justify-content-center">
+                              <h6 class="mb-0 text-sm">{{user.username}}</h6>
+                         
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0">{{user.email}}</p>
+                        
+                        </td>
+
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{user.last_login}}</span>
+                        </td>
+
+                        <td class="align-middle text-center text-sm">
+                          {% if user.is_active %}
+                          <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmation-{{user.id}}">
+                            Launch demo modal
+                          </button> -->
+                          <button id="active-{{user.id}}" style="width: 100px;" data-id ='{{user.id}}' class="active_inactive btn btn-success">Active</button>
+                          {% else %}
+                  
+                          <button  id ='active-{{user.id}}' style="width: 100px;" data-id="{{user.id}}" class="active_inactive btn btn-danger">Deactive</button>
+                          {% endif %}
+                          
+                        </td>
+                     
+                      </tr>
+
+
+                      <!-- Button trigger modal -->
+
+
+<!-- Modal
+<div class="modal fade" id="confirmation-{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <button id="active-{{user.id}}" style="width: 100px;" data-id ='{{user.id}}' class="active_inactive btn btn-success">Active</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+                     
+                    {% endfor %}
+                  
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- paginator view -->
+      <div class="col-12">
+        <nav>
+          <ul class="pagination justify-content-center">
+              {% if users.has_other_pages %}
+                
+                <!-- this is for the previous page -->
+                {% if users.has_previous %}
+                <li class=""><a class="btn  active page-link" href="?page={{users.previous_page_number}}" style="background-color: rgb(255,211,51);color: black;">&laquo; Prev</span></a></li>
+                {% else %}
+                <li class=""><a class="btn disabled  page-link" style="color: black;" href="#">&laquo; Prev </span></a></li>
+                {% endif %}
+
+                <!-- this is for the all pages available in the paginator -->
+                {% for page in  users.paginator.page_range %}
+
+                    {% if users.number == page %}
+                    
+                    <!-- this is for activation of current page -->
+                    <li class=""><a class="page-link btn   active" href="#" style="background-color: rgb(255,211,51); color: black;">{{page}} </a></li>
+
+                    {% else %}
+                    <!-- its for the linking each pages which is not current page -->
+                    <li class="" ><a class="page-link btn " style="color: black;" href="?page={{page}}">{{page}}</a></li>
+                    {% endif %}
+                
+                {% endfor %}
+
+                <!-- this is for the next page number -->
+                {% if users.has_next %}
+                <li class=""><a class="btn active  page-link" style="background-color: rgb(255,211,51); color: black;" href="?page={{users.next_page_number}}">Next &raquo;</a></li>
+                {% else %}
+                <li class=""><a class="active disabled page-link" style="color: black;" href="#">Next &raquo;</a></li>
+                {% endif %}
+
+            {% endif %}
+          </ul>
+        </nav>
+    </div>
+    <!-- paginator end herer -->
+        
+    </div>
+    {% include "base/footer.html" %}
+  </main>
+<!-- this is the script for user management -->
+  {% block scripts %}
+  
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="{% static 'admin/js/usermanagement/usermanagement.js'%}" defer></script>
+  {% endblock scripts %}
+
+
+
+
+  {% endblock adminbase %}

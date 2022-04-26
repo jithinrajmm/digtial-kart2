@@ -1,0 +1,445 @@
+{% extends "home/base.html" %}
+{% load crispy_forms_tags %}
+{% block css %}
+
+<style>
+    label{
+        color:white;
+    }
+    .asteriskField {
+    display: none;
+}
+input{
+    background-color: yellow;
+}
+#id_payment_mode{
+    background-color: rgb(255,211,51);
+    text-align: center;
+    font-size: 25px;
+}
+.custom-control-input:checked~.custom-control-label::before {
+  border-color: red !important;
+  background-color: red !important;
+}
+.hide{
+    display: none;
+}
+
+
+</style>
+  
+{% endblock css %}
+
+
+
+{% block base %}
+
+    <!-- Checkout Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-lg-8">
+                {% if address_valid %}
+
+                        {% if messages %}
+                            
+                        {% for message in messages %}
+                        <div class="alert alert-success text-center" role="alert">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+
+                        {% endif %}
+                        
+                {% endif %}
+                <!-- user_profile_view -->
+                <div class="row justify-content-center">
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">{{address_valid}} Billing Address</span></h5>
+                <div class="alert bg-dark alert-dark" role="alert">
+                    <div class="row justify-content-center align-items-center">
+                        <div class="col-md-4">
+                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                <i class="fa-solid fa-address-card"></i>
+                              </button>
+                        </div>
+                        <div class="col-md-4 text-start text-white">
+                            <P>{{user_profile_view.user.username}} Please click to add the ADDRESS</P>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="form-check form-switch mr-5">
+                            <input class="form-check-input bg-warning" type="checkbox" id="address_show" style="height: 20px; width: 70px;">
+                            <input class="form-check-input bg-warning hide" type="checkbox" id="address_hide" style="height: 20px; width:70px;" checked>
+                          </div>
+                
+                        </div>
+                    </div>
+                  </div>  
+                  
+                  <!-- address show -->
+                  <!-- address_add -->
+                  <div class="collapse" id="collapseExample">
+                    <div class="card card-body shadow-lg p-3 mb-5 bg-white rounded">
+                        <div class="row d-flex flex-row ml-2">
+                            <button data-toggle="modal" data-target="#addressAdd" class="btn btn-warning" style="width: 50px;"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div class="row ">
+                            {% for address in user_address %}
+                            <div class="col-sm-3 m-2 shadow-lg  rounded">
+                                <div class="card bg-dark">
+                                  <div class="card-body">
+                                    <p class="card-text text-white">{{address.first_name}} <br> {{address.last_name}} <br>
+                                        {{address.email}} <br>
+                                        {{address.phone}} <br>
+                                        {{address.address_line_1}}
+                                    </p>
+
+                                    <div class="row p-3">
+                                        <div class="col-4"><span data-address_id="{{address.id}}" class="select_address"><i class="fa-solid text-warning fa-hand-pointer"></i></span></div>
+                                        <div class="col-4"><a href="{% url 'address_delete' address.id%}"><i class="fa-solid fa-user-xmark"></i></a></div>
+                                        <div class="col-4"></div>
+                                    </div>
+                                    
+                                  </div>
+                                </div>
+                              </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                  </div>
+                  <!-- address end -->
+                <div class="p-30 mb-5" style="background-color: rgba(0, 0, 0, 0.523);">
+                    <div class="row  p-3">
+                        <form action="{% url 'place_orders' %}" id="myForm" method="POST">
+                            <div class="row m-0">
+                                <div class="col-md-6 form-group " >
+                                    {% csrf_token %}
+                                    {{form.first_name|as_crispy_field}}
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    {{form.last_name|as_crispy_field}}
+                                </div>
+                            </div>
+
+                        <div class="row m-0">
+                            <div class="col-md-6 form-group">
+                                {{form.email|as_crispy_field}}
+                            </div>
+                            <div class="col-md-6 form-group">
+                               {{form.phone|as_crispy_field}}
+                            </div>
+                        </div>
+                        <div class="row m-0">
+                            <div class="col-md-6 form-group">
+                                {{form.address_line_1|as_crispy_field}}
+                            </div>
+                            <div class="col-md-6 form-group">
+                                {{form.address_line_2|as_crispy_field}}
+                            </div>
+                        </div>
+
+                        <div class="row m-0">
+                            <div class="col-md-6 form-group">
+                                {{form.country|as_crispy_field}}
+                            </div>
+                            <div class="col-md-6 form-group">
+                               {{form.state|as_crispy_field}}
+                            </div>
+                        </div>
+
+                            <div class="row m-0">
+                                <div class="col-md-6 form-group">
+                                    {{form.city|as_crispy_field}}
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    {{form.order_note|as_crispy_field}}
+                                </div>
+                            </div>
+                        <div class="col-md-12 form-group">
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="mb-5">
+                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Payment</span></h5>
+                    <div class="bg-light p-30">
+   
+                        <button type="submit" class="btn btn-block btn-primary font-weight-bold py-3">Place Order</button>
+                    </form>
+                    </div>
+                </div>
+                <!-- Coupon Applications Here -->
+                <div class="mb-5">
+    
+
+                    <div class="mb-5">
+                        <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Coupon</span></h5>
+                        {% if applied_coupon %}
+                   
+
+                                {% if messages %}
+                    
+                                    {% for message in messages %}
+                                    <div class="alert alert-success text-center" role="alert">
+                                        {{ message }}
+                                    </div>
+                                    {% endfor %}
+                    
+                                {% endif %}
+                            <div class="bg-light p-30">
+                   
+                                    <a href="{% url 'cancel_coupon' %}" class="btn btn-block btn-primary font-weight-bold py-3">Cancel Coupon</a>
+                           
+                            </div>
+
+                        {% else %}
+
+                                {% if messages %}
+                                    
+                                {% for message in messages %}
+                                <div class="alert alert-danger text-center" role="alert">
+                                    {{ message }}
+                                </div>
+                                {% endfor %}
+                    
+                                {% endif %}
+
+
+                        <div class="bg-light p-30">
+
+                                <form class="mb-30" action="{% url 'coupon_apply' %}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="input-group">
+                                        {{coupon_apply_form}}
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-warning">Apply Coupon</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <button data-toggle="modal" data-target="#couponModal" type="submit" class="btn btn-warning"><b><i style="font-size: 20px;" class="fa-brands fa-gripfire"></i></b></button>
+                        </div>
+                    
+                        {% endif %}
+                    </div>
+  
+
+        
+        
+                </div>
+                <!-- Coupon Applications End  Here -->
+
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Order Total</span></h5>
+
+                <div class="bg-light p-30 mb-5">
+                    <div class="border-bottom pt-3 pb-2">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h6>Subtotal</h6>
+                            <h6>₹ {{total_price}}</h6>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">Shipping</h6>
+                            <h6 class="font-weight-medium">₹ {{shipping_charge}}</h6>
+                        </div>
+                    </div>
+
+                        {% if applied_coupon %}
+
+                        <div class="pt-2">
+                            <div class="d-flex justify-content-between mt-2">
+                                <h5>Deducted Amount</h5>
+                                <h5 class="text-danger">₹ {{deducted_amount}}</h5>
+                            </div>
+                        </div>
+
+                        {% endif %}
+
+                        <div class="pt-2">
+                            <div class="d-flex justify-content-between mt-2">
+                                <h5>Total</h5>
+                                <h5>₹ {{all_total}}</h5>
+                            </div>
+                        </div>  
+           
+
+                </div>
+
+
+
+
+                <!-- this is for the coupon application  -->
+
+
+
+            </div>
+        </div>
+    </div>
+    <!-- Checkout End -->
+
+    <!-- for displaying the coupons  -->
+
+    <div class="modal fade" id="couponModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content" style="background-color: rgba(0, 0, 0, 0.454);">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+ 
+            <div class="modal-body">
+           {% for coupon in  coupons %}
+
+            <div class="alert alert-dark text-center" style="background-color: rgba(0, 0, 0, 0.872); border: none; color: yellow;" role="alert">
+                {{coupon.coupon_code}}
+            </div>
+             
+           {% endfor %}
+            </div>
+     
+          </div>
+        </div>
+      </div>
+
+    <!-- end coupon here -->
+
+    <!-- for display the address add forms modal start -->
+
+<div class="modal fade" id="addressAdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content" style="background-color: rgba(0, 0, 0, 0.566);">
+        <div class="modal-header">
+          <h5 class="modal-title text-white text-center" id="exampleModalLabel">ADDRESS</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span class="text-white" aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form action="{% url 'address_add' %}" method="POST">
+                {% csrf_token %}
+                {{addressForm|crispy}}
+            
+          
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </form>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+      <!-- for display the address add forms modal end -->
+  
+{% endblock base %}
+
+{% block scripts %}
+<script>
+    const address = document.getElementById('address_show')
+    const form_clear = document.getElementById('address_hide')
+    const first_name = document.getElementById('id_first_name')
+    const last_name = document.getElementById('id_last_name')
+    const email = document.getElementById('id_email')
+    const phone = document.getElementById('id_phone')
+    const address_line_1 = document.getElementById('id_address_line_1')
+    const address_line_2 = document.getElementById('id_address_line_2')
+    const country = document.getElementById('id_country')
+    const state = document.getElementById('id_state')
+    const city = document.getElementById('id_city')
+    address.addEventListener('click',function(){
+        $.ajax({
+            url:"{% url 'user_address' %} ",
+            type:'GET',
+            success: function(response){
+             
+                first_name.value = response.first_name
+                last_name.value = response.last_name
+                email.value = response.email
+                phone.value = response.phone
+                if (response.address_line_1){
+                    address_line_1.value = response.address_line_1
+                }
+                if (response.address_line_2){
+                    address_line_2.value = response.address_line_2
+                }
+                
+                if (response.country){
+
+                    country.value = response.country
+
+                }
+                
+                if (response.state){
+                    state.value = response.state
+                }
+                
+                if (response.city){
+                    city.value = response.city
+                }
+                address.classList.add('hide')
+                form_clear.classList.remove('hide')
+                },
+                
+            error: function(error){
+                console.log(error)
+            }
+        })
+    })
+form_clear.addEventListener('click',function(){
+    address.classList.remove('hide')
+    form_clear.classList.add('hide')
+    $("#address_show").prop('checked', false);
+    $("#address_hide").prop('checked', true);
+    
+    document.getElementById("myForm").reset()
+})
+
+// address selection from address
+
+const address_selection = [...document.getElementsByClassName('select_address')]
+address_selection.forEach(Element=>{
+    Element.addEventListener('click',function(){
+        let id = Element.dataset.address_id
+        $.ajax({
+            url:"{% url 'user_address' %}",
+            type:'GET',
+            data: {'id': id},
+            success: function(response){
+                
+                first_name.value = response.first_name
+                last_name.value = response.last_name
+                email.value = response.email
+                phone.value = response.phone
+                if (response.address_line_1){
+                    address_line_1.value = response.address_line_1
+                }
+                if (response.address_line_2){
+                    address_line_2.value = response.address_line_2
+                }
+                
+                if (response.country){
+
+                    country.value = response.country
+
+                }
+                
+                if (response.state){
+                    state.value = response.state
+                }
+                
+                if (response.city){
+                    city.value = response.city
+                }
+            },
+            error: function(errors){
+                console.log(errors)
+            }
+        })
+    })
+})
+
+</script>
+
+
+  
+{% endblock scripts %}

@@ -1,0 +1,298 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block adminbase %}
+{% block css %}
+<style>
+
+input[type='file'] {
+  color: rgba(0, 0, 0, 0);
+
+}
+input[type=file]::file-selector-button {
+  border: 2px solid #e7e55c;
+  padding: .2em .4em;
+  border-radius: .2em;
+  background-color: rgb(209,161,14);
+  transition: 1s;
+}
+.hide{
+  display: none;
+}
+  .product_name{
+    color: black;
+    font-weight: bolder;
+    font-size: 15px;
+    position: absolute;
+ 
+  }
+  .asteriskField {
+    display: none;
+}
+  .product_name:hover{
+    color: rgb(209, 209, 5);
+    text-decoration: none;
+    font-size: 17px;
+    cursor: w-resize;
+  }
+  label{
+    color: white;
+  }
+  .alert-error{
+    background-color: rgba(255, 0, 0, 0.377);
+  }
+</style>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+{% endblock css %}
+  
+{% include "base/sidebar.html" %}
+
+<main class="main-content position-relative border-radius-lg " style="height: 100vh;">
+    {% include "base/nav.html" %}
+    {% block pagename %}
+    <b>COUPON MANAGEMENT</b> 
+  {% endblock pagename %}
+
+
+    <div class="row justify-content-center">
+              {% if messages %}
+                    
+
+              {% for message in messages %}
+            
+                <div class="alert col-md-4 alert-{{ message.tags }} text-center" role="alert">
+                      {{ message }}
+                </div>
+
+              {% endfor %}
+                  
+                    
+              {% endif %}
+    </div>
+
+
+    <div class="container-fluid py-4 "  style="height: 100vh;">
+      <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-primary shadow-primary border-radius-lg p-4 pb-3" style="display: flex; justify-content: space-between; ">
+                  <div style="">
+                    <a href="{% url 'coupon_add' %}" class="btn btn-dark m-0"><b>+</b></a>
+                  </div>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Number </b></th>
+                      <th class="text-uppercase  text-center text-secondary text-xxs font-weight-bolder opacity-7"><b>Coupon Code</b></th>
+                      <th class="text-uppercase text-center text-secondary text-xxs font-weight-bolder opacity-7"><b>Valid From</b></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Valid to</b></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Discount % </b></th>
+                      <th class="text-left text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b></b></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b> </b></th>
+            
+
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for coupon in  coupons %}
+                    <tr>
+                        <td>
+                          
+                          <p class="text-xs text-center font-weight-bold mb-0">{{ forloop.counter }}</p>
+                        </td>
+                        <td>
+                          <p class="text-xs text-center font-weight-bold mb-0">{{coupon.coupon_code}}</p>
+                        </td>
+
+                        <td>
+                          <p class="text-xs text-center font-weight-bold mb-0">{{coupon.valid_from}}</p>
+                        </td>
+
+                        <td>
+                          <p class="text-xs text-center font-weight-bold mb-0">{{coupon.valid_to}}</p>
+                        </td>
+
+                        <td>
+                          <p class="text-xs text-center font-weight-bold mb-0">{{coupon.discount}}</p>
+                        </td>
+
+    
+                          
+                       
+                        <td class="align-middle text-center text-sm">
+                          <a class='product_details' href="{% url 'delete_coupon' coupon.id %}"  class="delete_class text-xs font-weight-bold"><h5><i class="text-danger fa-solid fa-trash"></i></h5></a>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                          <a  id="product_id" href="{% url 'update_coupon' coupon.id %}" class="delete_class text-xs font-weight-bold"><h5><i class="text-success fa-solid fa-pen-to-square"></i></h5></a>
+                        </td>
+                        {% if coupon.active %}
+                        <td class="align-middle text-center text-sm">
+                          <a  id="product_id" href="{% url 'active_coupon' coupon.id %}" class="active_inactive btn btn-warning text-xs-center font-weight-bold">  <i class="fa-solid fa-check-double"></i></a>
+                        </td>
+                        {% else %}
+                        <td class="align-middle text-center text-sm">
+                          <a  id="product_id" href="{% url 'active_coupon' coupon.id %}" class="active_inactive btn btn-danger text-xs-center font-weight-bold"><i class="fa-solid fa-x"></i></a>
+                        </td>
+                        {% endif %}
+ 
+
+                      </tr>
+                     
+                    {% endfor %}
+                  
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        
+    </div>
+    {% include "base/footer.html" %}
+  </main>
+
+
+<!-- Modal view and update modaal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="background-color: rgba(0, 0, 0, 0.479);">
+
+      <div class="modal-body " style="background-color: rgba(0, 0, 0, 0.63); color: white;">
+        <img id="image_output" src="">
+
+        <form  enctype="multipart/form-data"
+        class="product_update" method="POST"
+        novalidate="">
+        {% csrf_token %}
+     
+
+          <div class="form-row m-0">
+            <div class="form-group col-md-6 m-0">
+             
+            </div>
+            <div class="form-group col-md-6 m-0">
+           
+            </div>
+          </div>
+          <div class="form-row m-0">
+            <div class="form-group col-md-12">
+         
+            </div>
+          </div>
+
+          <div class="form-row m-0">
+            <div class="form-group col-md-6 m-0">
+            
+            </div>
+            <div class="form-group col-md-6 m-0">
+          
+            </div>
+          </div>
+
+          <div class="form-row m-0">
+            <div class="form-group col-md-12">
+            
+            </div>
+          </div>
+
+          <div class="form-row m-0">
+            <div class="form-group col-md-3 m-0">
+              <img class="hide" id= 'img1' src="" style="width: 100px; height: 100px; " >
+            
+            </div>
+            <div class="form-group col-md-3 m-0">
+              <img class="hide"  id= 'img2' src="" style="width: 100px; height: 100px;">
+      
+            </div>
+            <div class="form-group col-md-3 m-0">
+              <img class="hide" id= 'img3' src="" style="width: 100px; height: 100px;">
+           
+            </div>
+            <div class="form-group col-md-3 m-0">
+              <img class="hide" id='img4' src="" style="width: 100px; height: 100px;">
+          
+            </div>
+          </div>
+            </div>
+      <div class="modal-footer">
+       
+        <button type="submit" class="btn btn-warning">Save changes</button>
+      </form>
+      <button type="button" id="modal_close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- this is the script for user management -->
+  {% block scripts %}
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    // this is for the cofirmation on the delete butto
+    $('.product_details').on('click',function(e){
+      e.preventDefault();
+      var self = $(this)
+      Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+  if (result.isConfirmed) {
+    Swal.fire(
+      'Deleted!',
+      'Your file has been deleted.',
+      'success'
+    )
+    location.href = self.attr('href')
+  }
+}) //
+    })
+
+// CINFIRMATION FOR ACTIVATION OF COUPON
+$('.active_inactive').on('click',function(e){
+      e.preventDefault();
+      var self = $(this)
+      Swal.fire({
+  title: 'Are you sure?',
+  text: "activate or deactivate",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, Activate'
+}).then((result) => {
+  if (result.isConfirmed) {
+    Swal.fire(
+      'success fullly changed!',
+      '👍',
+      'success'
+    )
+    location.href = self.attr('href')
+  }
+}) //
+})
+
+  </script>
+
+  <script src="{% static 'admin/js/productmanagement/productmanagement.js'%}" defer></script>
+
+  {% endblock scripts %}
+
+
+
+
+  {% endblock adminbase %}

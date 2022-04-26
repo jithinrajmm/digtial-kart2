@@ -1,0 +1,181 @@
+{% extends "home/base.html" %}
+{% load static %}
+{% block css %}
+<style>
+    .form-control::-webkit-input-placeholder {
+            color: rgb(249, 249, 249);
+        }
+</style>
+
+{% endblock css %}
+
+
+{% block base %}
+  <!-- Cart Start -->
+  <div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-lg-8 table-responsive mb-5">
+            {% if cart_items %}
+              
+            
+            <table class="table table-light table-borderless table-hover text-center mb-0">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Products</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody class="align-middle">
+                    {% for item in cart_items  %}
+                
+                    <tr id="cart_item_row_{{item.id}}">
+                        <td class="align-middle"><img src="{{item.product.image_2.url}}" alt="" style="width: 50px;"> {{item.product.product_name}}</td>
+                        <td class="align-middle">{{item.product.price}}</td>
+
+                        <td class="align-middle">
+                            <input class="session_cart_id" type="text" value="{{item.cart.cart_id}}" placeholder="{{item.cart.cart_id}}" hidden>
+                            <input id="cart-product-id-{{item.id}}" type="text" value="{{item.product.id}}" placeholder="{{item.cart.cart_id}}" hidden>
+                            <div class="input-group quantity mx-auto" style="width: 100px;">
+                                <div class="input-group-btn">
+                                    {% if item.quantity == 1 %}
+                                    <button  data-id="{{item.id}}" class="btn-decrement btn btn-sm btn-primary btn-minus" disabled>
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                   
+                                    {% else %}
+                                    <button  data-id="{{item.id}}" class="btn-decrement btn btn-sm btn-primary btn-minus" >
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                    {% endif %}
+
+                                </div>
+                                <input id="count-id-{{item.id}}"  type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value="{{item.quantity}}">
+                                <div class="input-group-btn">
+                                    <button  data-id="{{item.id}}"  class="btn-increment btn btn-sm btn-primary btn-plus">
+                                        <i  class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="align-middle " id="price-{{item.id}}">{{item.total_price}}</td>
+                        <td class="align-middle"><a href="{% url 'delete_cart' item.id %}" class="cart_delete btn btn-sm btn-danger"><b><i class="text-warning fa fa-times"></i></b></a></td>
+                    </tr>
+                      
+      
+ 
+                      
+                    {% endfor %}
+
+                </tbody>
+            </table>
+            {% else %}
+            <div class="card">
+                <div class="card-header text-center bg-warning">
+                   
+                    <h3><b>NO ITEM IN CART</b></h3>
+                    
+                  
+                </div>
+                <div class="card-body bg-dark text-center text-white">
+                  <h5 class="card-title text-white">Your Desire our World</h5>
+                  <p class="card-text">Continue shopping...... </p>
+                  <div class="row justify-content-center">
+                  <a href="{% url 'store:Store' %}" class="btn btn-primary w-25">Back to shoping</a>
+                </div>
+                </div>
+              </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-4">
+
+
+     
+ 
+
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Cart Summary</span></h5>
+            <div class="bg-light p-30 mb-5 border border-dark">
+                <div class="border-bottom pb-2">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h6>Subtotal</h6>
+                        <h6 id="total-price"><b>₹</b>{{total_price}}</h6>
+                    </div>
+                    {% if cart_items %}
+                    <div class="d-flex justify-content-between">
+                        <h6 class="font-weight-medium">Shipping</h6>
+                        <h6 id="shipping-charge" class="font-weight-medium"><b>₹</b>{{shipping_charge}}</h6>
+                    </div>
+                </div>
+                <div class="pt-2">
+                    <div class="d-flex justify-content-between mt-2">
+                        <h5>Total</h5>
+                        <h5 id="all-total"><b>₹</b>{{all_total}}</h5>
+ 
+                    </div>
+                    {% endif %}
+
+                    {% if without_coupon %}
+                    <div class="d-flex justify-content-between mt-2">
+                        <h5>Deducted Amount</h5>
+                        <h5 id="all-total"><b>₹</b>{{deducted_amount}}</h5>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <h5>without coupon</h5>
+                        <h5 id="all-total"><b>₹</b>{{without_coupon}}</h5>
+                    </div>
+
+                    
+               
+                    {% endif %}
+                   
+                    {% if cart_items %}
+                    <a href="{% url 'check_out' False %}" class="btn btn-block btn-warning font-weight-bold my-3 py-3">Proceed To Checkout</a>
+                    {% else %}
+                    <a href="{% url 'store:Store' %}" class="btn btn-block btn-success font-weight-bold my-3 py-3">Grab the deals</a>
+                    {% endif %}
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Cart End -->
+
+  
+{% endblock base %}
+
+{% block scripts %}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{% static 'user/js/store/store.js' %}"></script>
+<script>
+
+$('#cancel_coupon').on('click',function(e){
+      e.preventDefault();
+      var self = $(this)
+      Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+  if (result.isConfirmed) {
+    Swal.fire(
+      'Deleted!',
+      'Your file has been deleted.',
+      'success'
+    )
+    location.href = self.attr('href')
+  }
+}) //
+    })
+
+</script>
+
+  
+{% endblock scripts %}

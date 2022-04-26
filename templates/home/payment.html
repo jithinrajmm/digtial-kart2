@@ -1,0 +1,268 @@
+{% extends "home/base.html" %}
+{% load crispy_forms_tags %}
+{% block css %}
+
+<style>
+    label{
+        color:white;
+    }
+    .asteriskField {
+    display: none;
+}
+input{
+    background-color: yellow;
+}
+#id_payment_mode{
+    background-color: rgb(255,211,51);
+    text-align: center;
+    font-size: 25px;
+}
+.card {
+        background-color: white;
+        padding: 25px;
+        border: 1px solid #bbbbbb;
+        border-radius: 5px;
+        box-shadow: 1px 1px 10px 0px rgb(0 0 0 / 25%);
+      }
+      .title {
+        text-align: center;
+        letter-spacing: 1px;
+      }
+      .muted {
+        color: #8e7f7f;
+        display: block;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+      .btn_container {
+        padding: 20px;
+        text-align: center;
+      }
+      .btnr {
+        border-radius: 4px;
+        cursor: pointer;
+        padding: 4px 8px;
+        background-color: #ffaaa7;
+        color: white;
+        font-size: 1.2em;
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
+
+</style>
+  
+{% endblock css %}
+
+
+
+{% block base %}
+
+    <!-- Checkout Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-lg-8">
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Billing Address</span></h5>
+                <div class="row p-30 mb-3 text-white bg-dark">
+
+                    <div class="col-md-6 text-center">
+                                
+                        <h6 class="text-white">{{orders.first_name}}</h6>
+                        <h6 class="text-white">{{orders.last_name}}</h6>
+                        <h6 class="text-white">{{orders.phone}}</h6>
+                        <h6 class="text-white">{{orders.email}}</h6>
+                    </div>
+                    <div class="col-md-6 text-center">            
+                        <h6 class="text-white">{{orders.address_line_1}}</h6>
+                        <h6 class="text-white">{{orders.address_line_2}}</h6>
+                        <h6 class="text-white">{{orders.country}}</h6>
+                        <h6 class="text-white">{{orders.state}}</h6>
+                        <h6 class="text-white">{{orders.city}}</h6>
+                    </div>
+           
+
+
+                </div>
+     
+                    <div class="col-lg-12 table-responsive mb-5">
+                        {% if cart_items %}
+                          
+                        
+                        <table class="table table-light table-borderless table-hover text-center mb-0">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Products</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+
+                                </tr>
+                            </thead>
+                            <tbody class="align-middle">
+                                {% for item in cart_items  %}
+                            
+                                <tr id="cart_item_row_{{item.id}}">
+                                    <td class="align-middle"><img src="{{item.product.image_2.url}}" alt="" style="width: 50px;"> {{item.product.product_name}}</td>
+                                    <td class="align-middle">{{item.product.price}}</td>
+                                    <td class="align-middle">
+                                        {{item.quantity}}
+                                    </td>
+                                    <td class="align-middle " id="price-{{item.id}}">{{item.total_price}}</td>
+                                    
+                                </tr>
+                                  
+                  
+             
+                                  
+                                {% endfor %}
+            
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="card">
+                            <div class="card-header text-center bg-warning">
+                               
+                                <h3><b>NO ITEM IN CART</b></h3>
+                                
+                              
+                            </div>
+                            <div class="card-body bg-dark text-center text-white">
+                              <h5 class="card-title text-white">Your Desire our World</h5>
+                              <p class="card-text">Continue shopping...... </p>
+                              <div class="row justify-content-center">
+                              <a href="{% url 'store:Store' %}" class="btn btn-primary w-25">Back to shoping</a>
+                            </div>
+                            </div>
+                          </div>
+                        {% endif %}
+                    </div>
+
+
+            </div>
+            <div class="col-lg-4">
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Order Total</span></h5>
+                <div class="bg-light p-30 mb-5">
+
+                    <div class="border-bottom pt-3 pb-2">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h6>Subtotal</h6>
+                            <h6>₹ {{total_price}}</h6>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">Shipping</h6>
+                            <h6 class="font-weight-medium">₹ {{shipping_charge}}</h6>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5>Total</h5>
+                            <div style="display: flex;">
+                                <h5 class="mr-0">₹</h5><h5 id="all_total">{{all_total}}</h5>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-5">
+                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Payment</span></h5>
+                    <div class="bg-light p-30">
+                        <a href="{% url 'cash_on_delivery' orders.order_number %}" class="btn btn-block btn-primary font-weight-bold py-3">CASH ON DELIVERY</a>
+                        <a  class="btn mt-3 btn-block btn-dark text-warning font-weight-bold py-3" data-toggle="modal" data-target="#paypal">Pay Pal</a>
+                        <button id="rzp-button1" class="btn mt-3 btn-block btn-dark text-warning font-weight-bold py-3">Razor Pay</button>
+                        
+
+                       
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Checkout End -->
+
+
+
+  <!-- Modal for paypal -->
+  <div class="modal fade" id="paypal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content bg-dark">
+
+        <div class="modal-header">
+
+          <h5 class="modal-title text-warning" id="exampleModalLabel">Pay-pal </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              {{form.render}}
+            </div>
+            
+          </div>
+            
+        </div>
+
+        <div class="modal-footer" style="border: none;">
+
+          <button type="button" class="btn btn-danger text-warning" data-dismiss="modal">Close</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+    <!-- end the paypal integrations -->
+
+  
+
+
+  
+{% endblock base %}
+
+{% block scripts %}
+
+
+
+
+
+
+
+
+</script> -->
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+
+
+var options = {
+    "key": "rzp_test_hZS1JbACCy0OBz", // Enter the Key ID generated from the Dashboard
+    "amount": "{{payment_amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Digital Tech",
+    "description": "Your Desire Our World",
+    "image": "data:image/png;base64,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",
+    "order_id": "{{payment_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "callback_url": "http://" + window.location.host + "/orders/razor_pay_payment/",
+    "prefill": {  
+
+        "name": "{{orders.first_name}}",
+        "email": "{{orders.email}}",
+        "contact": "{{orders.phone}}"
+    },
+    "notes": {
+        "address": "Jithin raj mm , Digital Tech"
+    },
+    "theme": {
+        "color": "#FFD333"
+    }
+};
+var rzp1 = new Razorpay(options);
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
+
+{% endblock scripts %}

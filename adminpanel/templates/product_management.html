@@ -1,0 +1,329 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block adminbase %}
+{% block css %}
+<style>
+
+input[type='file'] {
+  color: rgba(0, 0, 0, 0);
+
+}
+input[type=file]::file-selector-button {
+  border: 2px solid #e7e55c;
+  padding: .2em .4em;
+  border-radius: .2em;
+  background-color: rgb(209,161,14);
+  transition: 1s;
+}
+.hide{
+  display: none;
+}
+  .product_name{
+    color: black;
+    font-weight: bolder;
+    font-size: 15px;
+    position: absolute;
+ 
+  }
+  .asteriskField {
+    display: none;
+}
+  .product_name:hover{
+    color: rgb(209, 209, 5);
+    text-decoration: none;
+    font-size: 17px;
+    cursor: w-resize;
+  }
+  label{
+    color: white;
+  }
+  .alert-error{
+    background-color: rgba(255, 0, 0, 0.377);
+  }
+</style>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+{% endblock css %}
+  
+{% include "base/sidebar.html" %}
+
+<main class="main-content position-relative  h-100 border-radius-lg " style="height: 100%;">
+    {% include "base/nav.html" %}
+    {% block pagename %}
+    <b>PRODUCT MANAGEMENT</b> 
+  {% endblock pagename %}
+
+
+
+    <div class="row justify-content-center">
+              {% if messages %}
+                    
+
+              {% for message in messages %}
+            
+                <div class="alert col-md-4 alert-{{ message.tags }} text-center" role="alert">
+                      {{ message }}
+                </div>
+
+              {% endfor %}
+                  
+                    
+              {% endif %}
+    </div>
+
+
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3" style="display: flex; justify-content: space-between; ">
+                <div style="display: flex;">
+
+                  <div style="border-right: 3px rgb(247, 243, 243) solid;">
+                    <h6 style="margin-right: 10px;" class="text-dark text-capitalize ps-3"> <b>Total {{ category_count }} Categories</b></h6>
+                  </div>
+
+                  <div style="border-right: 3px rgb(247, 243, 243) solid;">
+                    <h6 style="margin-right: 10px;" class=" text-capitalize ps-3 text-dark"><b>Total  {{product_count}} products</b></h6>
+                  </div>
+              </div>
+
+              <div style="margin-right: 20px;">
+                  <a href="{% url 'product_add' %}" class="btn btn-dark m-0"><b>+</b></a>
+                </div>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Product</b></th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>price</b></th>
+                      <th class="text-left text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Category</b></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Stock</b></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Added Date</b></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Available</b></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b></b></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b></b></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for product in  products %}
+                    <tr>
+                        <td>
+                          <div class="d-flex px-2 py-1">
+                            <div>
+                              <img src="{{product.image_2.url}}" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                            </div>
+                            <div class="d-flex flex-column justify-content-center">
+                              <a class="product_name"  data-id ='{{product.id}}' >{{product.product_name}}</a>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0">{{product.price}}</p>
+                        </td>
+
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0">{{product.category.category_name}}</p>
+                        </td>
+
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{product.stock}}</span>
+                        </td>
+
+                        <td class="align-middle text-center text-sm">
+                          <span class="text-secondary text-xs font-weight-bold">{{product.created}}</span>
+                        </td>
+
+                          <td class="align-middle text-center text-sm">
+                          {% if product.is_available %}
+                          <span class="text-success text-xs font-weight-bold">Available</span>
+                          {% else %}
+                          <span class="text-danger text-xs font-weight-bold">Not available</span>
+                          {% endif %}
+                          
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                          <a class='product_details' href="{% url 'product_delete' product.id%}"  class="delete_class text-xs font-weight-bold"><h5><i class="text-danger fa-solid fa-trash"></i></h5></a>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                          <a  id="product_id" href="{% url 'product_update' product.id %}" class="delete_class text-xs font-weight-bold"><h5><i class="text-success fa-solid fa-pen-to-square"></i></h5></a>
+                        </td>
+                        
+                        
+                        
+                     
+                      </tr>
+                     
+                    {% endfor %}
+                  
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+            <!-- paginator view -->
+            <div class="col-12">
+              <nav>
+                <ul class="pagination justify-content-center">
+                    {% if products.has_other_pages %}
+                      
+                      <!-- this is for the previous page -->
+                      {% if products.has_previous %}
+                      <li class=""><a class="btn  active page-link" href="?page={{products.previous_page_number}}" style="background-color: rgb(255,211,51);color: black;">&laquo; Prev</span></a></li>
+                      {% else %}
+                      <li class=""><a class="btn disabled  page-link" style="color: black;" href="#">&laquo; Prev </span></a></li>
+                      {% endif %}
+      
+                      <!-- this is for the all pages available in the paginator -->
+                      {% for page in  products.paginator.page_range %}
+      
+                          {% if products.number == page %}
+                          
+                          <!-- this is for activation of current page -->
+                          <li class=""><a class="page-link btn   active" href="#" style="background-color: rgb(255,211,51); color: black;">{{page}} </a></li>
+      
+                          {% else %}
+                          <!-- its for the linking each pages which is not current page -->
+                          <li class="" ><a class="page-link btn " style="color: black;" href="?page={{page}}">{{page}}</a></li>
+                          {% endif %}
+                      
+                      {% endfor %}
+      
+                      <!-- this is for the next page number -->
+                      {% if products.has_next %}
+                      <li class=""><a class="btn active  page-link" style="background-color: rgb(255,211,51); color: black;" href="?page={{products.next_page_number}}">Next &raquo;</a></li>
+                      {% else %}
+                      <li class=""><a class="active disabled page-link" style="color: black;" href="#">Next &raquo;</a></li>
+                      {% endif %}
+      
+                  {% endif %}
+                </ul>
+              </nav>
+          </div>
+          <!-- paginator end herer -->
+        
+    </div>
+    {% include "base/footer.html" %}
+  </main>
+
+
+<!-- Modal view and update modaal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="background-color: rgba(0, 0, 0, 0.479);">
+
+      <div class="modal-body " style="background-color: rgba(0, 0, 0, 0.63); color: white;">
+        <img id="image_output" src="">
+
+        <form  enctype="multipart/form-data"
+        class="product_update" method="POST"
+        novalidate="">
+        {% csrf_token %}
+     
+
+          <div class="form-row m-0">
+            <div class="form-group col-md-6 m-0">
+              {{product_form.product_name|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-6 m-0">
+              {{product_form.category|as_crispy_field}}
+            </div>
+          </div>
+          <div class="form-row m-0">
+            <div class="form-group col-md-12">
+              {{product_form.slug|as_crispy_field}}
+            </div>
+          </div>
+
+          <div class="form-row m-0">
+            <div class="form-group col-md-6 m-0">
+              {{product_form.price|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-6 m-0">
+              {{product_form.stock|as_crispy_field}}
+            </div>
+          </div>
+
+          <div class="form-row m-0">
+            <div class="form-group col-md-12">
+              {{product_form.description|as_crispy_field}}
+            </div>
+          </div>
+
+          <div class="form-row m-0">
+            <div class="form-group col-md-3 m-0">
+              <img class="hide" id= 'img1' src="" style="width: 100px; height: 100px; " >
+              {{product_form.image_1|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-3 m-0">
+              <img class="hide"  id= 'img2' src="" style="width: 100px; height: 100px;">
+              {{product_form.image_2|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-3 m-0">
+              <img class="hide" id= 'img3' src="" style="width: 100px; height: 100px;">
+              {{product_form.image_3|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-3 m-0">
+              <img class="hide" id='img4' src="" style="width: 100px; height: 100px;">
+              {{product_form.image_4|as_crispy_field}}
+            </div>
+          </div>
+            </div>
+      <div class="modal-footer">
+       
+        <button type="submit" class="btn btn-warning">Save changes</button>
+      </form>
+      <button type="button" id="modal_close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- this is the script for user management -->
+  {% block scripts %}
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    // this is for the cofirmation on the delete button
+    $('.product_details').on('click',function(e){
+      e.preventDefault();
+      var self = $(this)
+      Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+  if (result.isConfirmed) {
+    Swal.fire(
+      'cancelled!',
+      'Your order has been Cancelled.',
+      'successcess Fully'
+    )
+    location.href = self.attr('href')
+  }
+}) //
+    })
+
+  </script>
+
+  <script src="{% static 'admin/js/productmanagement/productmanagement.js'%}" defer></script>
+
+  {% endblock scripts %}
+
+
+
+
+  {% endblock adminbase %}

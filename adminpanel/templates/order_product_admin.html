@@ -1,0 +1,250 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block css %}
+<style>
+  Label{
+    color: white;
+  }
+  .alert-error{
+    background-color: rgba(255, 0, 0, 0.377);
+  }
+</style>
+  
+{% endblock css %}
+
+{% block adminbase %}
+  
+{% include "base/sidebar.html" %}
+
+<main class="main-content position-relative  h-100 border-radius-lg " style="height: 100%;">
+    {% include "base/nav.html" %}
+    {% block pagename %}
+    <b>ORDERD PRODUCT MANAGEMENT</b> 
+  {% endblock pagename %}
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="row justify-content-start">
+          {% if messages %}
+                
+
+          {% for message in messages %}
+        
+            <div class="alert col-md-8 alert-{{ message.tags }} text-center" role="alert">
+                  {{ message }}
+            </div>
+
+          {% endfor %}
+              
+                
+          {% endif %}
+        </div>
+        <div class="col-md-12">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3" style="display: flex; justify-content: space-between; ">
+                <div style="display: flex; justify-content: space-between;">
+                      <div >
+                        <h6 style="margin-right: 10px;" class="text-dark text-capitalize ps-3">                  
+                             <a href="" class="btn btn-dark">
+                            <b>Order Mangement</b>
+                        </a> </h6>
+                      </div>
+                      <!-- {% for key, value in cat_product_count.items  %}
+                      <div style="border-right: 3px rgb(247, 243, 243) solid;">
+                        <h6 style="margin-right: 10px;" class=" text-capitalize ps-3 text-dark"><b> {{key}}-{{value}} products</b></h6>
+                      </div>
+                      {% endfor %} -->
+                </div>
+                <div style="margin-right: 20px;">
+
+
+           
+                </div> 
+               
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-dark  text-center text-xxs font-weight-bolder opacity-7"><b>User</b></th>
+                      <th class="text-uppercase text-dark text-center text-xxs font-weight-bolder opacity-7"><b> Product</b></th>
+                      <th class="text-uppercase text-dark text-center text-xxs font-weight-bolder opacity-7"><b>product price</b></th>
+                      <th class="text-uppercase text-dark text-center text-xxs font-weight-bolder opacity-7"><b>Quantity</b></th>
+                      <th class="text-uppercase text-dark text-center text-xxs font-weight-bolder opacity-7"><b>Order Date </b></th>
+                      <th class="text-uppercase text-dark text-center text-xxs font-weight-bolder opacity-7"><b>Payment Method</b></th>
+                      <th class="text-uppercase text-dark text-center text-xxs font-weight-bolder opacity-7"><b>Cancel </b></th>                      
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for order in  order_products %}
+                    <tr>
+
+                        <td>
+                              <h6 class=" text-center mb-0 text-sm">{{ order.user.username }}</h6>
+                        </td>
+                        <td>
+                            <h6 class=" text-center mb-0 text-sm">{{ order.product.product_name }}</h6>
+                       </td>
+
+                        <td>
+                          <h6 class="text-center mb-0 text-sm">{{ order.product_price }}</h6>
+                        </td>
+
+                        <td>
+                            <h6 class="text-center mb-0 text-sm">{{ order.quantity }}</h6>
+                        </td>
+
+                        <td>
+                            <h6 class="text-center mb-0 text-sm">{{ order.created_at }}</h6>
+                        </td>
+                        
+                        <td>
+                            <h6 class="text-center mb-0 text-sm">{{ order.payment.payment_method }}</h6>
+                        </td>
+
+               
+                        {% if order.ordered %}
+                    
+                        <td class="align-middle text-center text-sm">
+                            <a href="{% url 'order_cancel_admin' order.id %}" class="btn btn-success text-xs font-weight-bold"><h5><i class="fa-solid fa-prescription"></i></h5></a>
+                          </td>
+                          {% else %}
+                          <td class="align-middle text-center text-sm">
+                            <a data-toggle="modal" data-target="#exampleModal" class="btn btn-danger text-xs font-weight-bold"><h5><i class="fa-solid fa-prescription"></i></h5></a>
+                          </td>
+                          
+                        {% endif %}
+
+                     
+                      </tr>
+                     
+                    {% endfor %}
+                  
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- modal for is the order, The order is cancelled then showing the not allowed messages -->
+
+        <!-- Button trigger modal -->
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog " role="document">
+      <div class="modal-content bg-warning">
+        <div class="modal-header">
+    
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+
+            <h1> sorry , order already cancelled </h1>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    </div>
+    {% include "base/footer.html" %}
+  </main>
+
+
+  <!-- category add modal  -->
+  <!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="categoryadd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content bg-dark p-3">
+      <div class="modal-header" style="border-bottom: 2px solid yellow;">
+        <h5 class="modal-title text-white" id="exampleModalLabel">Category Add</h5>
+        <button type="button" class="close" style="color: yellow;" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="." method="POST" >
+          {% csrf_token %}
+        {{category_form|crispy}}
+       
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-warning">Add category</button>
+      </form>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+<!-- this is the script for categoy management.py -->
+  {% block scripts %}
+  <!-- this is for the automatic slug creations -->
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+     $('.product_details').on('click',function(e){
+      e.preventDefault();
+      var self = $(this)
+      console.log(self.data('title'))
+      console.log(self.attr('href'))
+      Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+  if (result.isConfirmed) {
+    Swal.fire(
+      'Deleted!',
+      'Your file has been deleted.',
+      'success'
+    )
+    location.href = self.attr('href')
+  }
+}) //
+    });
+    $('#id_category_name').keypress(function() {
+    var dInput = this.value;
+    $('#id_category_slug').val(dInput)
+    });
+     // this is for the cofirmation on the delete button
+  
+    
+
+  </script>
+  <!-- this is for the confirmation of delete button using the sweet alert -->
+
+  <script>
+   
+  </script>
+
+
+  {% endblock scripts %}
+
+
+
+
+  {% endblock adminbase %}

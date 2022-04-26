@@ -1,0 +1,706 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block adminbase %}
+
+{% include "base/sidebar.html" %}
+
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <!-- Navbar -->
+    {% include "base/nav.html" %}
+    {% block pagename %}
+             <b>DASHBOARD DIGITAL TECH</b> 
+    {% endblock pagename %}
+    <!-- End Navbar -->
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                <i data-toggle="modal" data-target="#revenue" class="fa-solid fa-money-bill-1-wave"></i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">Today Revenue</p>
+                <h4 class="mb-0">{{today_revenue }}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-3">
+              <h5 class="mb-0">Total Revenue ₹ {{total_revenue}}</h5>
+            </div>
+          </div>
+        </div>
+        <!-- modal for showing the revenues -->
+        <div class="modal fade" id="revenue" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="alert alert-warning text-white" role="alert" style="display: flex; justify-content: space-between;">
+                  <div class="ml-0 text-start">
+                  First name
+                  </div>               
+                  <div class="">
+                    Country
+                  </div>
+                  <div>
+                    State
+                  </div>
+                  <div>
+                    City
+                  </div>
+                  <div>
+                    Total Amount
+                  </div>
+                  
+                </div>
+                {% for payment in order_revenue %}
+                <div class="alert alert-dark text-white" role="alert" style="display: flex; justify-content: space-between;">
+                  <div>
+                    {{payment.first_name}}
+                  </div>               
+                  <div class="">
+                    {{payment.country}}
+                  </div>
+                  <div>
+                    {{payment.state}}
+                  </div>
+                  <div>
+                    {{payment.city}}
+                  </div>
+                  <div>
+                    {{payment.order_total}}
+                  </div>
+                  
+                </div>
+                {% endfor %}
+              </table>
+          
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ending the revenue modal -->
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">person</i>
+              </div>
+              <div class="text-end pt-1">
+                <h5 class="text-sm mb-0 text-capitalize">Today's Users</h5>
+              <h4 class="mb-0">{{today_registerd_users.count}}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-3">
+           <h5>Total users: {{ users.count }}</h5 >
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-danger shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                <i class="fa-solid fa-plane-slash"></i>
+              </div>
+              <div class="text-end pt-1">
+                <h5 class="text-sm mb-0 text-capitalize">Cancelled orders</h5>
+                <h4 class="mb-0 text-danger"> {{cancelled_orders.count}}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-3">
+              <h5 class="mb-0"><span class="text-danger text-sm font-weight-bolder">.</span> Total orders : {{total_orders}}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                <i class="fa-solid fa-face-grin-beam"></i>
+              </div>
+              <div class="text-end pt-1">
+   
+                <h4 class="text-sm ml-2 mb-0 text-capitalize">Most Payments :  {{payment_method_type.payment_method}}</h4>
+                <h4 class="mb-0">{{payment_methods.count}}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-3">
+              <p class="mb-0"><span class="text-success text-sm font-weight-bolder"></span>than yesterday</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-lg-4 col-md-6 mt-4 mb-4">
+          <div class="card z-index-2 ">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+              <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+                <div class="chart">
+                  <canvas id="chart-bars" class="chart-canvas" height="170"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <h6 class="mb-0 ">YEAR WISE </h6>
+              <p class="text-sm ">CURRENT : 2022</p>
+              <hr class="dark horizontal">
+              <div class="d-flex ">
+                <i class="material-icons text-sm my-auto me-1"></i>
+                <p class="mb-0 text-sm">  </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mt-4 mb-4">
+          <div class="card z-index-2  ">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+              <div class="bg-gradient-success shadow-success border-radius-lg py-3 pe-1">
+                <div class="chart">
+                  <canvas id="chart-line" class="chart-canvas" height="170"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <h6 class="mb-0 "> Daily Sales </h6>
+              <p class="text-sm "> <span class="font-weight-bolder"></span> </p>
+              <hr class="dark horizontal">
+              <div class="d-flex ">
+                <i class="material-icons text-sm my-auto me-1"></i>
+                <p class="mb-0 text-sm"> PENDING</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 mt-4 mb-3">
+          <div class="card z-index-2 ">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+              <div class="bg-gradient-dark shadow-dark border-radius-lg py-3 pe-1">
+                <div class="chart">
+                  <canvas id="chart-line-tasks" class="chart-canvas" height="170"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <h6 class="mb-0 ">Completed Tasks</h6>
+              <p class="text-sm ">Last Campaign Performance</p>
+              <hr class="dark horizontal">
+              <div class="d-flex ">
+                <i class="material-icons text-sm my-auto me-1"></i>
+                <p class="mb-0 text-sm"></p>
+   
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+<!-- car 1 row 2 -->
+        <div class="col-lg-4 mt-4 mb-3">
+          <div class="card z-index-2 ">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+              <div class="bg-gradient-dark shadow-dark border-radius-lg py-3 pe-1">
+                <div class="chart">
+                  <canvas id="myChart1" class="chart-canvas" height="170"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <h6 class="mb-0 ">PAYMENT MODES</h6>
+              <p class="text-sm ">COD, PAYPAL, RAZORPAY</p>
+              <hr class="dark horizontal">
+              <div class="d-flex ">
+                <i class="material-icons text-sm my-auto me-1">schedule</i>
+                <p class="mb-0 text-sm">just updated</p>
+   
+
+              </div>
+            </div>
+          </div>
+        </div>
+<!-- card 1 end row 2 -->
+ 
+<!--cart 2  row 3 -->
+<div class="col-lg-4 mt-4 mb-3">
+  <div class="card z-index-2 ">
+    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+      <div class="bg-gradient-dark shadow-dark border-radius-lg py-3 pe-1">
+        <div class="chart">
+          <canvas id="chart2row2" class="chart-canvas" height="170"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h6 class="mb-0 ">ORDERS DETAILS</h6>
+      <p class="text-sm ">showing the ordes </p>
+      <hr class="dark horizontal">
+      <div class="d-flex ">
+        <i class="material-icons text-sm my-auto me-1">schedule</i>
+        <p class="mb-0 text-sm">just updated</p>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- row 2 chart 3 -->
+<div class="col-lg-4 mt-4 mb-3">
+  <div class="card z-index-2 ">
+    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" >
+      <div class="bg-gradient-dark shadow-dark border-radius-lg py-3 pe-1">
+        <div class="chart">
+          <canvas id="chart3row3" class="chart-canvas" height="170"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h6 class="mb-0 ">PAYMENT DETAILS</h6>
+      <p class="text-sm ">COMPLETED AND PENDING AMOUNTS</p>
+      <hr class="dark horizontal">
+      <div class="d-flex ">
+        <i class="material-icons text-sm my-auto me-1">schedule</i>
+        <p class="mb-0 text-sm">just updated</p>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- row 2 chart 3 end -->
+
+<!-- card 2 end -->
+
+
+      </div>
+
+
+
+
+      {% include "base/footer.html" %}
+    </div>
+  </main>
+
+
+  {% block scripts %}
+
+  <script src="{% static 'admin/js/plugins/chartjs.min.js'%}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+
+
+
+  <script>
+    Chart.defaults.font.size = 16;
+Chart.defaults.font.color = '#888';
+Chart.defaults.color = "#FFD333"
+// chart 1 row 2 jithin
+const ctx1 = document.getElementById('myChart1').getContext('2d');
+new Chart(ctx1, {
+    type: 'bar',
+    data: {
+        labels: ['COD', 'PAYPAL', 'RAZORPAY'],
+        datasets: [{
+            label: 'COD',
+            data: ['{{cod.count}}', '{{paypal.count}}',1],
+            backgroundColor: [
+                'rgb(90,177,94)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1,
+            hoverBorderWidth:3,
+            hoverBorderColor:'#FFD333',
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        maintainAspectRatio : false,
+    }
+});
+
+// chart 1 row enc
+// chart 2 row 2 jithin
+// chart2row2
+let chart4 = document.getElementById('chart2row2').getContext('2d')
+
+
+// Chart.defaults.font.size
+const data23 = {
+  labels: [
+    'NEW',
+    'ACCEPTED',
+    'COMPLETED',
+    'CANCELLED'
+  ],
+  datasets: [{
+    label: 'My First Dataset',
+    data: ['{{new_orders.count}}', '{{accepted_orders.count}}', '{{completed_orders}}','{{cancelled_orders.count}}'],
+    backgroundColor: [
+      'rgb(255, 99, 132)',
+      'rgb(54, 162, 235)',
+      'rgb(255, 205, 86)',
+      'rgb(255, 205, 0)',
+    ],
+    hoverOffset: 4
+  }]
+};
+const config23 = {
+  type: 'pie',
+  data: data23,
+  options: {
+    maintainAspectRatio : false,
+  }
+};
+const myChart23 = new Chart(
+    document.getElementById('chart2row2'),
+    config23
+  );
+// row 2 chart 3 
+
+const data3 = {
+  labels: [
+    'PENDING',
+    'COMPLETED',
+  
+  ],
+  datasets: [{
+    label: 'My First Dataset',
+    data: ['{{payment_completd.count}}','{{pending_completd.count}}'],
+    backgroundColor: [
+      'rgb(255, 99, 132)',
+      'rgb(54, 162, 235)',
+      'rgb(255, 205, 86)'
+    ],
+    hoverOffset: 4
+  }]
+};
+const config3 = {
+  type: 'doughnut',
+  data: data3,
+  options: {
+    maintainAspectRatio : false,
+  }
+};
+
+const myChart2 = new Chart(
+    document.getElementById('chart3row3'),
+    config3
+  );
+
+
+
+// row 2 chart 3 end
+
+// custome chart form
+
+var ctx = document.getElementById("chart-bars");
+
+new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["2022", "2023", "2024", "2025", "2026"],
+        datasets: [{
+          label: "Sales",
+          tension: 0.4,
+          borderWidth: 0,
+          borderRadius: 4,
+          borderSkipped: false,
+          backgroundColor: "rgba(255, 255, 255, .8)",
+          data: ['{{year_wise.count}}',],
+          maxBarThickness: 6,
+        }, ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        scales: {
+          y: {
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: false,
+              borderDash: [5, 5],
+              color: 'rgba(255, 255, 255, .2)'
+            },
+            ticks: {
+              suggestedMin: 0,
+              suggestedMax: 500,
+              beginAtZero: true,
+              padding: 10,
+              font: {
+                size: 14,
+                weight: 300,
+                family: "Roboto",
+                style: 'normal',
+                lineHeight: 2
+              },
+              color: "#fff"
+            },
+          },
+          x: {
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: false,
+              borderDash: [5, 5],
+              color: 'rgba(255, 255, 255, .2)'
+            },
+            ticks: {
+              display: true,
+              color: '#f8f9fa',
+              padding: 10,
+              font: {
+                size: 14,
+                weight: 300,
+                family: "Roboto",
+                style: 'normal',
+                lineHeight: 2
+              },
+            }
+          },
+        },
+      },
+    });
+
+
+    var ctx2 = document.getElementById("chart-line");
+
+    new Chart(ctx2, {
+      type: "line",
+      data: {
+        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        datasets: [{
+          label: "Mobile apps",
+          tension: 0,
+          borderWidth: 0,
+          pointRadius: 5,
+          pointBackgroundColor: "rgba(255, 255, 255, .8)",
+          pointBorderColor: "transparent",
+          borderColor: "rgba(255, 255, 255, .8)",
+          borderColor: "rgba(255, 255, 255, .8)",
+          borderWidth: 4,
+          backgroundColor: "transparent",
+          fill: true,
+          data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
+          maxBarThickness: 6
+
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        scales: {
+          y: {
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: false,
+              borderDash: [5, 5],
+              color: 'rgba(255, 255, 255, .2)'
+            },
+            ticks: {
+              display: true,
+              color: '#f8f9fa',
+              padding: 10,
+              font: {
+                size: 14,
+                weight: 300,
+                family: "Roboto",
+                style: 'normal',
+                lineHeight: 2
+              },
+            }
+          },
+          x: {
+            grid: {
+              drawBorder: false,
+              display: false,
+              drawOnChartArea: false,
+              drawTicks: false,
+              borderDash: [5, 5]
+            },
+            ticks: {
+              display: true,
+              color: '#f8f9fa',
+              padding: 10,
+              font: {
+                size: 14,
+                weight: 300,
+                family: "Roboto",
+                style: 'normal',
+                lineHeight: 2
+              },
+            }
+          },
+        },
+      },
+    });
+
+    var ctx3 = document.getElementById("chart-line-tasks");
+
+    new Chart(ctx3, {
+      type: "line",
+      data: {
+        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        datasets: [{
+          label: "Mobile apps",
+          tension: 0,
+          borderWidth: 0,
+          pointRadius: 5,
+          pointBackgroundColor: "rgba(255, 255, 255, .8)",
+          pointBorderColor: "transparent",
+          borderColor: "rgba(255, 255, 255, .8)",
+          borderWidth: 4,
+          backgroundColor: "transparent",
+          fill: true,
+          data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
+          maxBarThickness: 6
+
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        scales: {
+          y: {
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: false,
+              borderDash: [5, 5],
+              color: 'rgba(255, 255, 255, .2)'
+            },
+            ticks: {
+              display: true,
+              padding: 10,
+              color: '#f8f9fa',
+              font: {
+                size: 14,
+                weight: 300,
+                family: "Roboto",
+                style: 'normal',
+                lineHeight: 2
+              },
+            }
+          },
+          x: {
+            grid: {
+              drawBorder: false,
+              display: false,
+              drawOnChartArea: false,
+              drawTicks: false,
+              borderDash: [5, 5]
+            },
+            ticks: {
+              display: true,
+              color: '#f8f9fa',
+              padding: 10,
+              font: {
+                size: 14,
+                weight: 300,
+                family: "Roboto",
+                style: 'normal',
+                lineHeight: 2
+              },
+            }
+          },
+        },
+      },
+    });
+
+
+const  ctx5 = document.getElementById("chart2row2")
+
+new Chart(ctx5, {
+    data: {
+        datasets: [
+            {
+              fill: {
+                target: 'origin',
+                above: 'rgb(255, 0, 0)',   // Area will be red above the origin
+                below: 'rgb(0, 0, 255)'    // And blue below the origin
+              }
+            }
+        ]
+    }
+});
+  </script>
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+    
+  {% endblock scripts %}
+
+
+  {% endblock adminbase %}
+  

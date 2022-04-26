@@ -1,0 +1,323 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block adminbase %}
+{% block css %}
+<style>
+
+input[type='file'] {
+  color: rgba(0, 0, 0, 0);
+
+}
+input[type=file]::file-selector-button {
+  border: 2px solid #e7e55c;
+  padding: .2em .4em;
+  border-radius: .2em;
+  background-color: rgb(209,161,14);
+  transition: 1s;
+}
+.hide{
+  display: none;
+}
+  .product_name{
+    color: black;
+    font-weight: bolder;
+    font-size: 15px;
+    position: absolute;
+ 
+  }
+  .asteriskField {
+    display: none;
+}
+  .product_name:hover{
+    color: rgb(209, 209, 5);
+    text-decoration: none;
+    font-size: 17px;
+    cursor: w-resize;
+  }
+  label{
+    color: white;
+  }
+  .alert-error{
+    background-color: rgba(255, 0, 0, 0.377);
+  }
+</style>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+{% endblock css %}
+  
+{% include "base/sidebar.html" %}
+
+<main class="main-content position-relative border-radius-lg " style="height: 100vh;">
+    {% include "base/nav.html" %}
+    {% block pagename %}
+    <b>CATEGORY OFFER</b> 
+  {% endblock pagename %}
+
+
+
+    <div class="row justify-content-center">
+              {% if messages %}
+                    
+
+              {% for message in messages %}
+            
+                <div class="alert col-md-4 alert-{{ message.tags }} text-center" role="alert">
+                      {{ message }}
+                </div>
+
+              {% endfor %}
+                  
+                    
+              {% endif %}
+             
+            
+                {% block errorss %}
+
+                  {% if errors %}
+                  <script type="text/javascript">
+                    $(window).on('load', function() {
+                        $('#adding_offer').modal('show');
+                    });
+                  </script>
+                    {% endif %}
+
+                  {% endblock errorss %}
+             
+
+            
+
+              
+    </div>
+
+
+    <div class="container-fluid py-4 "  style="height: 100vh;">
+      <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-primary shadow-primary border-radius-lg p-4 pb-3" style="display: flex; justify-content: space-between; ">
+                  <div style="">
+                    <a href="" data-toggle="modal" data-target="#adding_offer" class="btn btn-dark m-0"><b>+</b></a>
+                  </div>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Number </b></th>
+                      <th class="text-uppercase  text-center text-secondary text-xxs font-weight-bolder opacity-7"><b>Category </b></th>
+                      <th class="text-uppercase text-center text-secondary text-xxs font-weight-bolder opacity-7"><b>Valid From</b></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Valid to</b></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b>Discount % </b></th>
+                      <th class="text-left text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><b></b></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+            
+
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for offer in  category_offers %}
+                    <tr>
+                        <td>
+                          
+                          <p class="text-xs text-center font-weight-bold mb-0">{{ forloop.counter }}</p>
+                        </td>
+                        <td>
+                          <p class="text-xs text-center font-weight-bold mb-0">{{offer.category.category_name}}</p>
+                        </td>
+
+                        <td>
+                          <p class="text-xs text-center font-weight-bold mb-0">{{offer.valid_from}}</p>
+                        </td>
+
+                        <td>
+                          <p class="text-xs text-center font-weight-bold mb-0">{{offer.valid_to}}</p>
+                        </td>
+
+                        <td>
+                          <p class="text-xs text-center font-weight-bold mb-0">{{offer.offer_percentage}}</p>
+                        </td>
+
+                        <td class="align-middle text-center text-sm">
+                          <a class='delete_offer' href="{% url 'delete_category_offer'  offer.id %}"  class="delete_class text-xs font-weight-bold"><h5><i class="text-danger fa-solid fa-trash"></i></h5></a>
+                        </td>
+
+                        
+                        <td class="align-middle text-center text-sm">
+                          <a  id="product_id" href="{% url 'update_category_offer' offer.id %}" class=" text-xs font-weight-bold"><h5><i class="text-success fa-solid fa-pen-to-square"></i></h5></a>
+                        </td>
+                                 
+   
+                        
+                      {% if offer.active %}
+                      <td class="align-middle text-center text-sm">
+                        <a href="{% url 'active_deactive_category_offer' offer.id %}"  class='active_deactivate btn btn-warning'>Actived</a>
+                      </td>
+
+                      
+                      {% else %}
+                      <td  class="align-middle text-center text-sm">
+                          <a href="{% url 'active_deactive_category_offer' offer.id %}" class=' btn btn-danger active_deactivate'
+                           >Deactived</a>
+                      </td>
+                      {% endif %}
+                      </tr>
+                     
+                    {% endfor %}
+                  
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+                        <!-- paginator view -->
+                        <div class="col-12">
+                          <nav>
+                            <ul class="pagination justify-content-center">
+                                {% if category_offers.has_other_pages %}
+                                  
+                                  <!-- this is for the previous page -->
+                                  {% if category_offers.has_previous %}
+                                  <li class=""><a class="btn  active page-link" href="?page={{category_offers.previous_page_number}}" style="background-color: rgb(255,211,51);color: black;">&laquo; Prev</span></a></li>
+                                  {% else %}
+                                  <li class=""><a class="btn disabled  page-link" style="color: black;" href="#">&laquo; Prev </span></a></li>
+                                  {% endif %}
+                  
+                                  <!-- this is for the all pages available in the paginator -->
+                                  {% for page in  category_offers.paginator.page_range %}
+                  
+                                      {% if category_offers.number == page %}
+                                      
+                                      <!-- this is for activation of current page -->
+                                      <li class=""><a class="page-link btn   active" href="#" style="background-color: rgb(255,211,51); color: black;">{{page}} </a></li>
+                  
+                                      {% else %}
+                                      <!-- its for the linking each pages which is not current page -->
+                                      <li class="" ><a class="page-link btn " style="color: black;" href="?page={{page}}">{{page}}</a></li>
+                                      {% endif %}
+                                  
+                                  {% endfor %}
+                  
+                                  <!-- this is for the next page number -->
+                                  {% if category_offers.has_next %}
+                                  <li class=""><a class="btn active  page-link" style="background-color: rgb(255,211,51); color: black;" href="?page={{category_offers.next_page_number}}">Next &raquo;</a></li>
+                                  {% else %}
+                                  <li class=""><a class="active disabled page-link" style="color: black;" href="#">Next &raquo;</a></li>
+                                  {% endif %}
+                  
+                              {% endif %}
+                            </ul>
+                          </nav>
+                      </div>
+                      <!-- paginator end herer -->
+              
+        
+    </div>
+    {% include "base/footer.html" %}
+  </main>
+
+
+<!-- Modal view and adding offer modaal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="adding_offer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content bg-dark">
+      <div class="modal-header" style="border-bottom: #FFD333 solid 3px;">
+        <h3 class="modal-title text-warning" id="exampleModalLabel"> PRODUCT OFFER</h3>
+
+        <button type="button" class="close text-warning" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="" method="POST">
+          {% csrf_token %}
+            {{form|crispy}}
+        </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-warning">Add Product Offer</button>
+      </form>
+   
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- this is the script for user management -->
+  {% block scripts %}
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    // this is for the cofirmation on the delete butto
+    $('.delete_offer').on('click',function(e){
+      e.preventDefault();
+      var self = $(this)
+      Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+  if (result.isConfirmed) {
+    Swal.fire(
+      'Deleted!',
+      'Your file has been deleted.',
+      'success'
+    )
+    location.href = self.attr('href')
+  }
+}) //
+    })
+
+
+  // this is for the confirmation of the activating the offer in product
+
+    $('.active_deactivate').on('click',function(e){
+      e.preventDefault();
+      var self = $(this)
+      Swal.fire({
+  title: 'Are you sure?',
+  text: "activate or deactivate",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, Activate'
+}).then((result) => {
+  if (result.isConfirmed) {
+    Swal.fire(
+      'success fullly changed!',
+      '👍',
+      'success'
+    )
+    location.href = self.attr('href')
+  }
+}) //
+    })
+
+  </script>
+
+  <script src="{% static 'admin/js/productmanagement/productmanagement.js'%}" defer></script>
+
+  {% endblock scripts %}
+
+
+
+
+  {% endblock adminbase %}

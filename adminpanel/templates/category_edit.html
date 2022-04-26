@@ -1,0 +1,81 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block css %}
+<style>
+*{
+margin: 0;
+} 
+input[type='file'] {
+  color: rgba(0, 0, 0, 0);
+
+}
+input[type=file]::file-selector-button {
+  border: 2px solid #e7e55c;
+  padding: .2em .4em;
+  border-radius: .2em;
+  background-color: rgb(209,161,14);
+  transition: 1s;
+}
+.hide{
+  display: none;
+}
+  .product_name{
+    color: black;
+    font-weight: bolder;
+    font-size: 15px;
+    position: absolute;
+ 
+  }
+  .asteriskField {
+    display: none;
+}
+label{
+    color: white;
+}
+</style>
+  
+{% endblock css %}
+{% block adminbase %}
+  
+{% include "base/sidebar.html" %}
+
+<main class="main-content position-relative  h-100 border-radius-lg " style="height: 50%;">
+    {% include "base/nav.html" %}
+        <div class="row justify-content-center" style="height: 100vh;">
+            <div class="col-md-5   m-5 bg-dark p-5" style="border-radius:15px;">
+                <form   method="POST" action=".">
+                          {% csrf_token %}
+                          {{category_edit_form|crispy}}
+                          
+                            
+                            <div class="row justify-content-center mt-2">
+                                <button type="submit" class="w-50 btn btn-warning p-2 text-center" >UPDATE</button>
+                            </div>
+                </form>
+            </div>
+        </div>
+    {% include "base/footer.html" %}
+  </main>
+  
+<!-- this is the script for user management -->
+  {% block scripts %}
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+
+  <script>
+
+
+
+// automatic creating slug fields
+$('#id_category_name').keyup(function() {
+    var dInput = this.value;
+    $('#id_category_slug').val(dInput)
+});
+  </script>
+  
+  {% endblock scripts %}
+
+
+
+
+  {% endblock adminbase %}

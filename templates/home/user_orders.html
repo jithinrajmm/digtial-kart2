@@ -1,0 +1,461 @@
+{% extends "home/base.html" %}
+{% load static %}
+{% block css %}
+<style>
+    .form-control::-webkit-input-placeholder {
+            color: rgb(249, 249, 249);
+        }
+        body {
+    min-height: 50vh;
+
+}
+
+.modal-content {
+    
+    background-color:rgb(255,211,51);
+    border-color: #000000;
+    border-radius: 1rem
+}
+
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 750px;
+        margin: 1.75rem auto
+    }
+}
+
+.show {
+    padding: 0
+}
+
+.modal-header {
+    border-bottom: none;
+    text-align: center
+}
+
+.modal-header .close {
+    padding: 1rem 1rem;
+    margin: -1rem -1rem -1rem 0;
+    color: rgb(1, 1, 1)
+}
+
+:-moz-any-link:focus {
+    outline: none
+}
+
+.modal-title {
+    line-height: 3rem
+}
+
+.modal-body {
+    padding: 1rem
+}
+
+#progressbar {
+    margin-bottom: 3vh;
+    overflow: hidden;
+    color: white;
+    padding-left: 0px;
+    margin-left: 100px;
+    margin-top: 3vh
+}
+
+#progressbar li {
+    list-style-type: none;
+    font-size: 0.8rem;
+    width: 25%;
+    float: left;
+    position: relative;
+    font-weight: 400;
+    color: white
+}
+
+#progressbar #step1:before {
+    content: "";
+    color: rgb(227, 0, 0);
+    width: 20px;
+    height: 20px;
+    margin-left: 0px !important
+}
+
+#progressbar #step2:before {
+    content: "";
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    margin-left: 32%
+}
+
+#progressbar #step3:before {
+    content: "";
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    margin-right: 32%
+}
+
+#progressbar #step4:before {
+    content: "";
+    color: rgba(8, 4, 4, 0.651);
+    width: 20px;
+    height: 20px;
+    margin-right: 0px !important
+}
+
+#progressbar li:before {
+    line-height: 29px;
+    display: block;
+    font-size: 12px;
+    background: rgb(1, 1, 1);
+    border-radius: 50%;
+    margin: auto;
+    z-index: -1;
+    margin-bottom: 1vh
+}
+
+#progressbar li:after {
+    content: '';
+    height: 3px;
+    background: rgba(3, 3, 3, 0.651);
+    position: absolute;
+    left: 0%;
+    right: 0%;
+    margin-bottom: 2vh;
+    top: 8px;
+    z-index: 1
+}
+
+.progress-track {
+    padding: 0 8%
+}
+
+#progressbar li:nth-child(2):after {
+    margin-right: auto
+}
+
+#progressbar li:nth-child(1):after {
+    margin: auto
+}
+
+#progressbar li:nth-child(3):after {
+    float: left;
+    width: 68%
+}
+
+#progressbar li:nth-child(4):after {
+    margin-left: auto;
+    width: 132%
+}
+
+#progressbar li.active:before,
+#progressbar li.active:after {
+    background: white
+}
+
+#three {
+    font-size: 1.2rem
+}
+
+@media (max-width: 767px) {
+    #three {
+        font-size: 1rem
+    }
+}
+
+.details {
+    padding: 2rem;
+    font-size: 1.4rem;
+    line-height: 3.5rem
+}
+
+@media (max-width: 767px) {
+    .details {
+        padding: 2rem 0;
+        font-size: 1rem;
+        line-height: 2.5rem
+    }
+}
+
+.d-table {
+    width: 100%
+}
+
+.d-table-row {
+    width: 100%
+}
+
+.d-table-cell {
+    padding-left: 3rem
+}
+
+@media (max-width: 767px) {
+    .d-table-cell {
+        padding-left: 1rem
+    }
+}
+
+.col-3 {
+    display: grid;
+    text-align: end
+}
+
+.col-3 .d-table-row {
+    align-self: flex-end
+}
+
+
+button:active {
+    outline: none
+}
+
+button:focus {
+    outline: none
+}
+
+</style>
+
+{% endblock css %}
+
+
+{% block base %}
+  <!-- Cart Start -->
+  <div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-lg-6 table-responsive  mb-5" style="max-height: 500px;">
+            {% if order_product %}
+              
+            
+            <table class="table overflow-auto table-light table-borderless table-hover text-center mb-0">
+                
+                <h4>Orderd Product</h4>
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Products</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Remove</th>
+                        <th>track</th>
+                    </tr>
+                </thead>
+                <tbody class="align-middle">
+
+
+                    {% for order in order_product  %}
+                
+                    <tr id="cart_item_row_{{item.id}}">
+                        <td class="align-middle"><img src="{{order.product.image_2.url}}"  alt="" style="width: 50px;"> {{order.product.product_name}}</td>
+                        <td class="align-middle">{{order.product.price}}</td>
+                        <td class="align-middle">
+                            {{order.quantity}}
+                        </td>
+                        <td class="align-middle " id="price-{{item.id}}">{{order.created_at|date:"M d, Y"}}</td>
+                        <td class="align-middle">
+                            {% if order.order.status == 'Completed' %}
+                            <a href="{% url 'return_order' order.id %}" class="return btn btn-sm btn-warning"><b> RETURN </b></a>
+                                
+                            {% elif order.order.status == 'Returned' %}
+                            <h6> RETURNED </h6>  </b></a>
+                            {% else %}
+                            <a href="{%url 'cancel_order' order.id %}" class="cart_delete btn btn-sm btn-danger"><b> CANCEL </b></a>
+                            {% endif %}
+                            
+                        </td>
+                        <td class="align-middle text-center">
+                            <div class="row justify-content-center">
+                            
+                                <div class="col-lg-8">
+                                    <button type="button" class="btn-warning" data-toggle="modal" data-target="#myModal-{{order.id}}"> Track</button> <!-- The Modal -->
+                                    <div class="modal fade" id="myModal-{{order.id}}">
+                                        
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    
+                                                    <div class="modal-content">
+                                                    
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title mx-auto"> Thank You For Your Order<span style="color:rgb(8, 8, 8);">{{order.user.username|upper}}</span> </h4> <button type="button" class="close" data-dismiss="modal">&times;</button><br>
+                                                           
+                                                        </div>
+                                                        <h5 class="modal-title mx-auto"> Order Status: {{order.order.status}}<br>ORDER NO: {{order.order.order_number}}</h5> 
+                                                        
+                                                        <ul>
+            
+                                                            {{order.product.product_name}} <br>
+                                                            {{order.product.price}}  <br>
+                                                            {{order.quantity}}</ul> <!-- Modal body -->
+                                                        <div class="modal-body">
+                                                            <div class="progress-track">
+                                                                {% if 'New' == order.order.status %}
+                                                                <ul id="progressbar">
+                                                                    <li class="step0 active text-left" id="step1">packed<img class="ml-5 mt-5" src="{{order.product.image_2.url}}" alt="" style="width: 50px; height: 50px; border-radius: 50%;"></li>
+                                                                    <li class="step0 text-center " id="step2">out for delivery</li>
+                                                                    <li class="step0 text-right" id="step3">Delivered</li>
+                                                                </ul>
+                                                                {% elif 'Accepted' == order.order.status %}
+
+                                                                <ul id="progressbar">
+                                                                    
+                                                                    <li class="step0 active text-left justify-content-start" id="step1">packed </li>
+                                                                    <li class="step0 active text-center" id="step2">out for delivery <img class="ml-5 mt-5" src="{{order.product.image_2.url}}" alt="" style="width: 50px; height: 50px; border-radius: 50%;"></li>
+                                                                    <li class="step0 text-right" id="step3">Delivered</li>
+                                                                </ul>
+                                                                {% elif 'Completed' == order.order.status %}
+                                                                <ul id="progressbar">
+                                                                    <li class="step0 active text-left" id="step1">packed</li>
+                                                                    <li class="step0 active text-center" id="step2">out for delivery</li>
+                                                                    <li class="step0 active text-right" id="step3">Delivered <img class="ml-5 mt-5" src="{{order.product.image_2.url}}" alt="" style="width: 50px; height: 50px; border-radius: 50%;"></li>
+                                                                </ul>
+
+                                                                {% endif %}
+                                                            
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-9">
+                                                                    <div class="details d-table">
+                                                                        <div class="d-table-row">
+                                                                            <div class="d-table-cell"> Shipped with </div>
+                                                                            <div class="d-table-cell"> UPS Expedited </div>
+                                                                        </div>
+                                                                        <div class="d-table-row">
+                                                                            <div class="d-table-cell"> Estimated Delivery </div>
+                                                                            <div class="d-table-cell"> {{order.created_at}} </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-3">
+                                                                    <div class="d-table-row"> <a href=#><i class="fa fa-phone" aria-hidden="true"></i></a> </div>
+                                                                    <div class="d-table-row"> <a href=#><i class="fa fa-envelope" aria-hidden="true"></i></a> </div>
+                                                                </div>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            
+                                        </td>
+                                    </tr>
+                                    
+                        
+                    {% endfor %}
+
+                </tbody>
+            </table>
+            {% else %}
+            <div class="card">
+                <div class="card-header text-center bg-warning">
+                   
+                    <h3><b>NO ITEM ORDERD ITEMS </b></h3>
+                    
+                  
+                </div>
+                <div class="card-body bg-dark text-center text-white">
+                  <h5 class="card-title text-white">Your Desire our World</h5>
+                  <p class="card-text">Continue shopping...... </p>
+                  <div class="row justify-content-center">
+                  <a href="{% url 'store:Store' %}" class="btn btn-primary w-25">Back to shoping</a>
+                </div>
+                </div>
+              </div>
+            {% endif %}
+        </div>
+
+        <!-- ORDERS TRACKING -->
+
+        <!-- cancelled products showing -->
+
+        <div class="col-lg-6 table-responsive mb-5">
+            {% if cancelled_product %}
+              
+            
+            <table class="table table-light table-borderless table-hover text-center mb-0">
+                <h4> Cancelled Products</h4>
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Products</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+
+                    </tr>
+                </thead>
+                <tbody class="align-middle">
+                    {% for order in cancelled_product  %}
+                
+                    <tr id="cart_item_row_{{item.id}}">
+                        <td class="align-middle"><img src="{{order.product.image_2.url}}"  alt="" style="width: 50px;"> {{order.product.product_name}}</td>
+                        <td class="align-middle">{{order.product.price}}</td>
+                        <td class="align-middle">
+                            {{order.quantity}}
+                        </td>
+                        <td class="align-middle " id="price-{{item.id}}">{{order.created_at|date:"M d, Y"}}</td>
+                        
+            </tr>
+                      
+                        
+                    {% endfor %}
+
+                </tbody>
+            </table>
+            {% else %}
+            <div class="card">
+                <div class="card-header text-center bg-warning">
+                   
+                    <h3><b>NO ITEM CANCELED ORDERS</b></h3>
+                    
+                  
+                </div>
+                <div class="card-body bg-dark text-center text-white">
+                  <h5 class="card-title text-white">Your Desire our World</h5>
+                  <p class="card-text">Continue shopping...... </p>
+                  <div class="row justify-content-center">
+                  <a href="{% url 'store:Store' %}" class="btn btn-primary w-25">Back to shoping</a>
+                </div>
+                </div>
+              </div>
+            {% endif %}
+        </div>
+
+
+ 
+</div>
+<!-- Cart End -->
+
+  
+{% endblock base %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  // this is for the cofirmation on the delete butto
+  $('.return').on('click',function(e){
+    e.preventDefault();
+    var self = $(this)
+    Swal.fire({
+title: 'Are you sure?',
+text: "You wan to return this Product",
+icon: 'Digi Kart',
+showCancelButton: true,
+confirmButtonColor: '#FFD333',
+cancelButtonColor: '#d33',
+confirmButtonText: 'return Proudct'
+}).then((result) => {
+if (result.isConfirmed) {
+  Swal.fire(
+    'Deleted!',
+    'Your file has been deleted.',
+    'success'
+  )
+  location.href = self.attr('href')
+}
+}) //
+  })
+
+</script>
+
+
+  
+{% endblock scripts %}
