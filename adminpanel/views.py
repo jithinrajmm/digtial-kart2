@@ -335,7 +335,7 @@ def product_update(request,id):
 
     if request.method == "POST":
         product_form = ProductForm(request.POST,request.FILES,instance=product)
-
+        
         if product_form.is_valid():
             image1_path = product.image_1.path
             image2_path = product.image_2.path
