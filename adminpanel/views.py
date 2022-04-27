@@ -408,7 +408,7 @@ def category_delete(request,id):
         messages.error(request,'The category is not available')
         return redirect('category_view')
 
-
+@logout
 def category_edit(request,id):
 
     if Category.objects.filter(id=id).exists():
@@ -433,6 +433,7 @@ def category_edit(request,id):
 
 
 # its only showing the order table
+@logout
 def order_management_view(request):
 
     orders = Order.objects.all()
@@ -443,7 +444,7 @@ def order_management_view(request):
               }
 
     return render(request,'order_management.html',context)
-
+@logout
 def order_product_table(reqeust):
     
     order_products = OrderProduct.objects.filter()
@@ -454,7 +455,7 @@ def order_product_table(reqeust):
 
     return render(reqeust,'order_product_admin.html',context)
 
-
+@logout
 def order_cancel_view(requset,order_id):
 
     try:
@@ -482,6 +483,7 @@ def order_cancel_view(requset,order_id):
 
 
 # order edit 
+@logout
 def order_edit_view(request,order_id):
 
     order = Order.objects.get(id=order_id)
@@ -496,6 +498,7 @@ def order_edit_view(request,order_id):
     return render(request,'order_edit_form.html',context)
 
 # coupon management views
+@logout
 def coupon_management_view(request):
 
     coupons = Coupon.objects.all()
@@ -506,7 +509,7 @@ def coupon_management_view(request):
 
     return render(request,'offer_management/coupon_management.html',context)  
 
-
+@logout
 def coupon_add_view(request):
 
     form = CouponForm(request.POST or None)
@@ -524,14 +527,14 @@ def coupon_add_view(request):
         
     return render(request,'offer_management/coupon_add.html',context)
 
-
+@logout
 def delete_coupon_view(request,coupon_id):
     
     coupon = Coupon.objects.get(id=coupon_id)
     coupon.delete()
     messages.error(request,'deleted success fully')
     return redirect('coupon_management')
-
+@logout
 def update_coupon_view(request,coupon_id):
 
     coupon  = Coupon.objects.get(id=coupon_id)
@@ -546,7 +549,7 @@ def update_coupon_view(request,coupon_id):
         'form': update_form,
     }
     return render(request,'offer_management/coupon_add.html',context)
-
+@logout
 def active_coupon_view(request,coupon_id):
 
     coupon = Coupon.objects.get(id=coupon_id)
@@ -564,6 +567,7 @@ def active_coupon_view(request,coupon_id):
 
 
 # Product Offer management View Start Heare
+@logout
 def product_offer_mangement_view(request,message=None):
 
     if message:
@@ -590,14 +594,14 @@ def product_offer_mangement_view(request,message=None):
         'products_offers': products_offers,
     }
     return render(request,'offer_management/product_offer.html',context)
-
+@logout
 def delete_product_offer_view(request,id):
 
     offer_product = ProductOffer.objects.get(id=id)
     offer_product.delete()
     messages.success(request,'deleted the Product Offer')
     return redirect('product_offer_management')
-
+@logout
 def edit_product_offer_view(request,id):
 
     offer_product = ProductOffer.objects.get(id=id)
@@ -616,7 +620,7 @@ def edit_product_offer_view(request,id):
         'form': form,
     }
     return render(request,'offer_management/product_offer_update.html',context)
-
+@logout
 def active_deactive_product_offer_view(request,id):
 
     product_offer = ProductOffer.objects.get(id=id)
@@ -631,7 +635,7 @@ def active_deactive_product_offer_view(request,id):
     return redirect('product_offer_management')
 
 
-
+@logout
 def category_offer_view(reqeust):
 
     errors = False
@@ -664,14 +668,14 @@ def category_offer_view(reqeust):
     return render(reqeust,'offer_management/category_offers.html',context)
 
 
-
+@logout
 def delete_category_offer_view(request,id):
 
     offer_category = CategoryOffer.objects.get(id=id)
     offer_category.delete()
     messages.success(request,'deleted the Category Offer')
     return redirect('category_offer')
-
+@logout
 def edit_category_offer_view(request,id):
 
     offer_Category = CategoryOffer.objects.get(id=id)
@@ -690,7 +694,7 @@ def edit_category_offer_view(request,id):
         'form': form,
     }
     return render(request,'offer_management/category_offer_update.html',context)
-
+@logout
 def active_deactive_category_offer_view(request,id):
 
     offer_Category = CategoryOffer.objects.get(id=id)
@@ -706,7 +710,7 @@ def active_deactive_category_offer_view(request,id):
 
     # End category offer Here
 
-
+@logout
 def admin_report_view(request):
 
     form = OrderFilter(request.GET, queryset=OrderProduct.objects.all())

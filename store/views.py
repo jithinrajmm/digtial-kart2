@@ -1,6 +1,5 @@
 
 
-from unicodedata import category
 from django.shortcuts import render
 from adminpanel.models import CategoryOffer
 from carts.models import CartItems

@@ -1,0 +1,115 @@
+{% extends "home/base.html" %}
+{% load crispy_forms_tags %}
+{% block css %}
+
+<style>
+    label{
+        color:white;
+    }
+    .asteriskField {
+    display: none;
+}
+
+#id_payment_mode{
+    background-color: rgb(255,211,51);
+    text-align: center;
+    font-size: 25px;
+}
+.custom-control-input:checked~.custom-control-label::before {
+  border-color: red !important;
+  background-color: red !important;
+}
+.hide{
+    display: none;
+}
+
+
+</style>
+  
+{% endblock css %}
+
+
+
+{% block base %}
+
+    <!-- Checkout Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5 justify-content-center">
+                <div class="col-md-6 bg-dark p-3">
+                    <form action="" method="POST">
+
+                        {% csrf_token %}
+                    <div class="row p-2">
+                        <div class="col">
+                          {{form.first_name|as_crispy_field}}
+                        </div>
+                        <div class="col">
+                          {{form.last_name|as_crispy_field}}
+                        </div>
+                      </div>
+
+                      <div class="row p-2">
+                        <div class="col">
+                          {{form.email|as_crispy_field}}
+                        </div>
+                        <div class="col">
+                          {{form.phone|as_crispy_field}}
+                        </div>
+                      </div>
+
+                      <div class="row p-2">
+                        <div class="col">
+                          {{form.address_line_1|as_crispy_field}}
+                        </div>
+                        <div class="col">
+                          {{form.address_line_2|as_crispy_field}}
+                        </div>
+                      </div>
+
+                      <div class="row p-2">
+                        <div class="col">
+                          {{form.country|as_crispy_field}}
+                        </div>
+                        <div class="col">
+                          {{form.state|as_crispy_field}}
+                        </div>
+                      </div>
+
+                      <div class="row p-2">
+                        <div class="col">
+                          {{form.city|as_crispy_field}}
+                        </div>
+                        <div class="col">
+                            
+                          </div>
+
+                      </div>
+
+                      <div class="row justify-content-center">
+                          <div class="col-md-3">
+                              {% if address_add %}
+                              <button type="submit" class="btn btn-block btn-warning">ADD</button>
+                              {% else %}
+                              <button type="submit" class="btn btn-block btn-warning">UPDATE</button>
+                              {% endif %}
+                            
+                          </div>
+                      </div>
+               
+                        <!-- {{form}} -->
+                    </form>
+                </div>
+    
+        </div>
+    </div>
+
+  
+{% endblock base %}
+
+{% block scripts %}
+<script>
+</script>
+
+
+  
+{% endblock scripts %}

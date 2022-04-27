@@ -112,7 +112,7 @@ html {
                     {% else %}
                     <div class="alert" id=""   role="alert">
                     
-                      <div class="col-md-8" style="display: flex; gap: 20px;">
+                      <div class="col-md-8 " style="display: flex; gap: 20px;">
               
                         <h6>Don't Forgot To Choose Adress</h6>
                       </div>
@@ -121,8 +121,6 @@ html {
                     </div>
                     {% endif %}
 
-         
-                    <h6 class="text-white text-center">{{user_profile.phone}}</h6>
               
       
                   </div>
@@ -297,8 +295,31 @@ html {
   </div>
 </div>
 <!-- the user cropping modal end here -->
-
-
+<!-- address add options  -->
+<div class="modal fade" id="addressAdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="background-color: rgba(0, 0, 0, 0.566);">
+      <div class="modal-header">
+        <h5 class="modal-title text-white text-center" id="exampleModalLabel">ADDRESS</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span class="text-white" aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form action="{% url 'address_add' %}" method="POST">
+              {% csrf_token %}
+              {{addressForm|crispy}}
+          
+        
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </form>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 

@@ -23,6 +23,7 @@ from django.http import HttpResponseBadRequest
 from django.contrib import messages
 # this is the coupon model
 from carts.models import Coupon
+from django.contrib.auth.decorators import login_required
 
 # For the random numbers , paypal backend integrations payment id
 import random
@@ -41,7 +42,7 @@ def internet_on():
         return False
 
 
-
+@login_required()
 def palce_orders_view(request):
 
     user = request.user
@@ -114,7 +115,7 @@ def palce_orders_view(request):
         else:
             return HttpResponse('form is not valid')
 
-
+@login_required()
 def payments_view(request,order_id):
 
 
@@ -182,7 +183,7 @@ def payments_view(request,order_id):
             'payment_id':payment.get('id'),
             'payment':payment,
             'payment_amount': orders.order_total * 100,
-            'callback_url':  "http://" + "127.0.0.1:8000" + "/orders/razor_pay_payment/"
+            
 
         }
 
@@ -192,13 +193,11 @@ def payments_view(request,order_id):
 def razorpay_payment(request):
 
     def verify_signature(response_data):
-        
+
         client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
         return client.utility.verify_payment_signature(response_data)
 
-
     if "razorpay_signature" in request.POST:
-
         payment_id = request.POST.get("razorpay_payment_id", "")
         provider_order_id = request.POST.get("razorpay_order_id", "")
         signature_id = request.POST.get("razorpay_signature", "")
@@ -207,81 +206,44 @@ def razorpay_payment(request):
         order = Order.objects.get(order_number=razor_pay.order.order_number)
         
         if verify_signature(request.POST):
-            cart_items = CartItems.objects.filter(user=request.user)
-            payments = Payment()
-            payments.user= request.user
-            payments.payment_id = order.order_number
-            payments.payment_method = 'RAZOR PAY'
-            payments.amount = order.order_total
-            payments.status = 'COMPLETED'
-            payments.save()
-            order.payment = payments
-            order.is_ordered = True
-            order.save()
-            order.save()
+
+
             request.session['order_id'] = order.order_number
 
 
-            for items in cart_items:
 
-                order_product = OrderProduct()
-                order_product.order = order
-                order_product.payment = payments
-                order_product.user =  items.user
-                order_product.product =items.product
-                order_product.quantity = items.quantity 
-                order_product.product_price = items.product.price
-                order_product.ordered = True
-                order_product.save()
-
-                    # product stock reduce 
-                product = Product.objects.get(id=items.product.id)
-                product.stock = product.stock - items.quantity
-
-                    # checking the stock of the product
-                if product.stock < 0:
-                    product.stock= 0 
-                    product.is_available=False
-
-                product.save()
-                # deleteing the product from the cartitems
-                items.delete()
-            return redirect('payment_success')
+            return redirect('razor_pay_success')
         else:
             messages.error(request, 'Sorry The payment Failed! try again ')
             return redirect('payments',order_id=order.order_number)
     else:
         return render(request, 'home/error.html')
             
-            
+@login_required()           
 @csrf_exempt
 def payment_canceled(request):
     return render(request, 'home/error.html')
 
+def razor_pay_success_view(request):
 
-def cash_on_delivery_view(request,order_id):
-
-    orders= Order.objects.get(order_number=order_id)
     cart_items = CartItems.objects.filter(user=request.user)
- 
-  
+    order_id = request.session.get('order_id')
+    order = Order.objects.get(order_number=order_id)
     payments = Payment()
     payments.user= request.user
-    payments.payment_id = order_id
-    payments.payment_method = 'COD'
-    payments.amount = orders.order_total
-    payments.status = 'PENDING'
+    payments.payment_id = order.order_number
+    payments.payment_method = 'RAZOR PAY'
+    payments.amount = order.order_total
+    payments.status = 'COMPLETED'
     payments.save()
-    orders.payment = payments
-    orders.is_ordered = True
-    orders.save()
-
-    # move the cart_items to orders product table 
-
+    order.payment = payments
+    order.is_ordered = True
+    order.save()
+    order.save()
     for items in cart_items:
 
         order_product = OrderProduct()
-        order_product.order = orders
+        order_product.order = order
         order_product.payment = payments
         order_product.user =  items.user
         order_product.product =items.product
@@ -290,23 +252,73 @@ def cash_on_delivery_view(request,order_id):
         order_product.ordered = True
         order_product.save()
 
-        # product stock reduce 
+                    # product stock reduce 
         product = Product.objects.get(id=items.product.id)
         product.stock = product.stock - items.quantity
 
-        # checking the stock of the product
+                    # checking the stock of the product
         if product.stock < 0:
+            product.stock= 0 
             product.is_available=False
 
         product.save()
-        # deleteing the product from the cartitems
+                # deleteing the product from the cartitems
         items.delete()
+        return redirect('payment_success')
+
+
+
+def cash_on_delivery_view(request,order_id):
+
+    if Order.objects.filter(order_number=order_id,is_ordered=False).exists():
+        orders= Order.objects.get(order_number=order_id,is_ordered=False)
+        cart_items = CartItems.objects.filter(user=request.user)
     
-    return redirect('payment_success')
+    
+        payments = Payment()
+        payments.user= request.user
+        payments.payment_id = order_id
+        payments.payment_method = 'COD'
+        payments.amount = orders.order_total
+        payments.status = 'PENDING'
+        payments.save()
+        orders.payment = payments
+        orders.is_ordered = True
+        orders.save()
 
+        # move the cart_items to orders product table 
 
+        for items in cart_items:
+
+            order_product = OrderProduct()
+            order_product.order = orders
+            order_product.payment = payments
+            order_product.user =  items.user
+            order_product.product =items.product
+            order_product.quantity = items.quantity 
+            order_product.product_price = items.product.price
+            order_product.ordered = True
+            order_product.save()
+
+            # product stock reduce 
+            product = Product.objects.get(id=items.product.id)
+            product.stock = product.stock - items.quantity
+
+            # checking the stock of the product
+            if product.stock < 0:
+                product.is_available=False
+
+            product.save()
+            # deleteing the product from the cartitems
+            items.delete()
+        
+        return redirect('payment_success')
+    else:
+        return redirect('store:Store')
+
+@login_required()
 def payment_succesfull(request):
-
+    
     if request.session.get('coupon_id'):
         coupon_code =  request.session.get('coupon_id')
         coupon = Coupon.objects.get(id=coupon_code)
@@ -326,8 +338,7 @@ def payment_succesfull(request):
         del request.session['order_id']
     else:
         return redirect('home')
-    # 6NAZCMXZY2WUA
-    # 6NAZCMXZY2WUA
+
 
     order_products=OrderProduct.objects.filter(user=request.user,order__order_number=order_id)
     order= Order.objects.get(user=request.user,order_number=order_id)
@@ -361,7 +372,9 @@ def payment_succesfull(request):
 
 
 
+
 """ this view is for the paypal payment integration from the frontend. dont delete it jithin😀"""
+@login_required()
 def paypal_payment_view(request,order_id):
 
     if request.method=="POST":
@@ -441,68 +454,72 @@ def paypal_payment_view(request,order_id):
 ''' this view is for the paypal backend integrations'''
 
 @csrf_exempt
+@login_required()
 def paypal_backend_integrations(request):
-
+   
     order_id = request.session.get('order_id')
-    orders= Order.objects.get(order_number=order_id)
-    cart_items = CartItems.objects.filter(user=request.user)
-    total_price = 0
-    all_total = 0
-    for item in cart_items:
-        total_price += item.product.price * item.quantity
+    if Order.objects.filter(order_number=order_id,is_ordered=False).exists():
+        orders= Order.objects.get(order_number=order_id)
+        cart_items = CartItems.objects.filter(user=request.user)
+        total_price = 0
+        all_total = 0
+        for item in cart_items:
+            total_price += item.product.price * item.quantity
 
-    if total_price<1000:
-        shipping_charge = 30
-        all_total = total_price + shipping_charge
-    else:
-        shipping_charge = 0
-        all_total = total_price
-    payments = Payment()
-    payments.user= request.user
-    random_number = random.randint(1,100) 
-    payments.payment_id = order_id+str(random_number)
-    payments.payment_method = 'PAYPAL'
-    payments.amount = orders.order_total
-    payments.status = 'COMPLETED'
-    payments.save()
-    orders.payment = payments
-    orders.is_ordered = True
-    orders.save()
+        if total_price<1000:
+            shipping_charge = 30
+            all_total = total_price + shipping_charge
+        else:
+            shipping_charge = 0
+            all_total = total_price
+        payments = Payment()
+        payments.user= request.user
+        random_number = random.randint(1,100) 
+        payments.payment_id = order_id+str(random_number)
+        payments.payment_method = 'PAYPAL'
+        payments.amount = orders.order_total
+        payments.status = 'COMPLETED'
+        payments.save()
+        orders.payment = payments
+        orders.is_ordered = True
+        orders.save()
 
-    # move the cart_items to orders product table 
+        # move the cart_items to orders product table 
 
-    for items in cart_items:
+        for items in cart_items:
+            
+            order_product = OrderProduct()
+            order_product.order = orders
+            order_product.payment = payments
+            order_product.user =  items.user
+            order_product.product =items.product
+            order_product.quantity = items.quantity 
+            order_product.product_price = items.product.price
+            order_product.ordered = True
+            order_product.save()
+
+            # product stock reduce 
+            product = Product.objects.get(id=items.product.id)
+            product.stock = product.stock - items.quantity
+
+            # checking the stock of the product
+            if product.stock < 0:
+                product.is_available = False
+
+            product.save()
+            # deleteing the product from the cartitems
+            items.delete()
         
-        order_product = OrderProduct()
-        order_product.order = orders
-        order_product.payment = payments
-        order_product.user =  items.user
-        order_product.product =items.product
-        order_product.quantity = items.quantity 
-        order_product.product_price = items.product.price
-        order_product.ordered = True
-        order_product.save()
-
-        # product stock reduce 
-        product = Product.objects.get(id=items.product.id)
-        product.stock = product.stock - items.quantity
-
-        # checking the stock of the product
-        if product.stock < 0:
-            product.is_available = False
-
-        product.save()
-        # deleteing the product from the cartitems
-        items.delete()
-    
-    return redirect('payment_success')
+        return redirect('payment_success')
+    else:
+        return redirect('store:Store')
 
 
-
+@login_required()
 def user_oreder_list_view(request):
     # the all details i took from the context preprocessor from the order.contex.Orderproduct
     return render(request,'home/user_orders.html')
-
+@login_required()
 def cancel_order_view(request,order_id):
     try:
         order_product = OrderProduct.objects.get(id=order_id,ordered=True)
@@ -527,7 +544,7 @@ def cancel_order_view(request,order_id):
     return redirect('user_orders')
 
 
-
+@login_required()
 def return_order_view(request,order_id):
 
     order_product = OrderProduct.objects.get(id=order_id,user=request.user)

@@ -148,7 +148,6 @@ def user_profile_view(request):
         form = UserProfileForm(request.POST,request.FILES,instance=user_profile)
        
         if form.is_valid():
-            
             form.save()
             return redirect('user_profile')
         else:
@@ -161,8 +160,11 @@ def user_profile_view(request):
     }
     return render(request,'accounts/user_profile.html',context)
 
+
 def user_address_add(request):
-    
+
+    address_add = True
+
     form = UserAddressForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
@@ -170,18 +172,37 @@ def user_address_add(request):
             form.user = request.user
             form.save()
             messages.success(request,'Address Addedd')
-            address_valid = 'True'
-            return redirect('check_out',address_valid)
+            print('hello hai')
+            url = request.META.get('HTTP_REFERER')
+            return redirect('check_out')
         else:
-            address_valid = 'False'
-            return redirect('check_out',address_valid = address_valid)
+            messages.error(request,'Try again ')
+    context = {
+        'form':form,
+        'address_add': address_add,
+    }
+    return render(request,'accounts/address_add.html',context)
 
+def address_edit_view(request,address_id):
+
+    print(address_id)
+    address = UserAddress.objects.get(id=address_id)
+    form = UserAddressForm(instance=address)
+    if request.method == "POST":
+        form = UserAddressForm(request.POST,instance=address)
+        if form.is_valid():
+            form.save()
+            return redirect('check_out')
+    context = {
+        'form':form
+    }
+    return render(request,'accounts/address_add.html',context)
 
 def address_delete_view(request,address_id):
     address = UserAddress.objects.get(id=address_id)
     address.delete()
     messages.success(request,'Deleted success fully')
-    return redirect('check_out','False')
+    return redirect('user_profile')
 
 def userLogout(request):
     logout(request)

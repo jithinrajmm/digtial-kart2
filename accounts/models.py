@@ -102,7 +102,7 @@ class UserAddress(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField(max_length=100)
-    phone = models.IntegerField()
+    phone = models.CharField(max_length=15, validators=[RegexValidator(r'^\d{1,15}$')])
     address_line_1 = models.TextField(max_length=300)
     address_line_2 = models.TextField(max_length=300)
     country = models.CharField(max_length=50)

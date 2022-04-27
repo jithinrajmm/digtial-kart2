@@ -15,7 +15,7 @@ urlpatterns =[
     # add address
     path('address_add',views.user_address_add,name='address_add'),
     path('address_delete/<str:address_id>/',views.address_delete_view,name='address_delete'),
-    
+    path('address_edit/<str:address_id>/',views.address_edit_view,name='address_edit'),
 
     # password reset views
     path('password_reset/',auth_views.PasswordResetView.as_view(),name='reset_password'),

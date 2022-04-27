@@ -131,7 +131,7 @@
                     {% endif %}
                    
                     {% if cart_items %}
-                    <a href="{% url 'check_out' False %}" class="btn btn-block btn-warning font-weight-bold my-3 py-3">Proceed To Checkout</a>
+                    <a href="{% url 'check_out'  %}" class="btn btn-block btn-warning font-weight-bold my-3 py-3">Proceed To Checkout</a>
                     {% else %}
                     <a href="{% url 'store:Store' %}" class="btn btn-block btn-success font-weight-bold my-3 py-3">Grab the deals</a>
                     {% endif %}

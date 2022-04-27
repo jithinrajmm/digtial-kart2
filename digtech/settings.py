@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -191,7 +191,7 @@ MESSAGING_SERVICE_SID = config('messaging_service_sid')
 # SESSION_COOKIE_SECURE = True
 # CSRF_COOKIE_SAMESITE = 'None'
 # SESSION_COOKIE_SAMESITE = 'None'
-CSRF_TRUSTED_ORIGINS= ['http://3.108.51.168/','http://ec2-3-108-51-168.ap-south-1.compute.amazonaws.com']
+CSRF_TRUSTED_ORIGINS= ['http://3.108.51.168/','http://ec2-3-108-51-168.ap-south-1.compute.amazonaws.com','https://api.razorpay.com/v1/gateway/mocksharp/payment?key_id=rzp_test_hZS1JbACCy0OBz']
 
 # smtp configruations
 

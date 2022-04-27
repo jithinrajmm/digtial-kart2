@@ -78,9 +78,7 @@ input{
                   <!-- address_add -->
                   <div class="collapse" id="collapseExample">
                     <div class="card card-body shadow-lg p-3 mb-5 bg-white rounded">
-                        <div class="row d-flex flex-row ml-2">
-                            <button data-toggle="modal" data-target="#addressAdd" class="btn btn-warning" style="width: 50px;"><i class="fa-solid fa-plus"></i></button>
-                        </div>
+                        <a class="btn btn-warning w-25" href="{% url 'address_add' %}">ADD</a>
                         <div class="row ">
                             {% for address in user_address %}
                             <div class="col-sm-3 m-2 shadow-lg  rounded">
@@ -94,8 +92,8 @@ input{
 
                                     <div class="row p-3">
                                         <div class="col-4"><span data-address_id="{{address.id}}" class="select_address"><i class="fa-solid text-warning fa-hand-pointer"></i></span></div>
-                                        <div class="col-4"><a href="{% url 'address_delete' address.id%}"><i class="fa-solid fa-user-xmark"></i></a></div>
-                                        <div class="col-4"></div>
+                                        <div class="col-4"><a href="{% url 'address_delete' address.id%}"><i class="fa-solid warning fa-user-xmark"></i></a></div>
+                                        <div class="col-4"><a href="{% url 'address_edit' address.id %}"><i class="fa-solid fa-pen-to-square"></i></a></div>
                                     </div>
                                     
                                   </div>
@@ -305,30 +303,7 @@ input{
 
     <!-- for display the address add forms modal start -->
 
-<div class="modal fade" id="addressAdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content" style="background-color: rgba(0, 0, 0, 0.566);">
-        <div class="modal-header">
-          <h5 class="modal-title text-white text-center" id="exampleModalLabel">ADDRESS</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span class="text-white" aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-            <form action="{% url 'address_add' %}" method="POST">
-                {% csrf_token %}
-                {{addressForm|crispy}}
-            
-          
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Save changes</button>
-        </form>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
+
       <!-- for display the address add forms modal end -->
   
 {% endblock base %}

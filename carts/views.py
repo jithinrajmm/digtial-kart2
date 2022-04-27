@@ -146,7 +146,7 @@ def buy_now_view(request,product_id):
             cart_items = CartItems.objects.create(product=product,cart=cart_,quantity=1)
             cart_items.save()
             
-    return redirect('check_out','False')
+    return redirect('check_out')
 
 
 
@@ -369,13 +369,7 @@ def delete_cart(request,cart_id):
 
 # this is the check_out function
 @login_required
-def check_out_view(request,address_valid=None):
-    
-    if address_valid == 'True':
-        address_valid=True
-    else:
-        address_valid = False
-        
+def check_out_view(request):    
     
     total_price =  0
     all_total = 0
@@ -457,7 +451,7 @@ def check_out_view(request,address_valid=None):
         'without_coupon':without_coupon,
         'coupon_apply_form': CouponApplyForm(),
         'coupons': coupons,
-        'address_valid':address_valid,
+
 
         }
     return render(request,'home/checkout.html',context)
@@ -482,13 +476,13 @@ def coupon_apply_view(request):
                 messages.error(request, 'Coupon Not available')
                 request.session['coupon_id'] = None
 
-            return redirect('check_out','False')
+            return redirect('check_out')
 
 def cancel_coupon_view(request):
 
     del request.session['coupon_id']
     messages.error(request, 'Coupon Cancelled')
-    return redirect('check_out','False')
+    return redirect('check_out')
 
 # this ajax for fetching the user data from the UserProfile
 def User_profile_address(request):
