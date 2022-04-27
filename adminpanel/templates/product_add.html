@@ -262,8 +262,16 @@ label{
 // automatic creating slug fields
 $('#id_product_name').keypress(function() {
     var dInput = this.value;
+    dInput = dInput.replace(/\s+/g, '')
+    console.log(dInput)
     $('#id_slug').val(dInput)
 });
+
+$('#id_category_slug').keypress(function() {
+    var dInput = this.value;
+    dInput = dInput.replace(/\s+/g, '')
+    $('#id_category_slug').val(dInput)
+    });
 
 $('#id_image_1').change( function(event) {
     var tmppath = URL.createObjectURL(event.target.files[0]);
@@ -362,8 +370,8 @@ $("#js-crop-and-upload").click(function () {
   $("#id_height").val(cropData["height"]);
   $("#id_width").val(cropData["width"]);
   $("#modalCrop").modal("hide");
-  const url = document.createElement("canvas").toDataURL
-    console.log(url,'jitine ithaaada cropped datayude upayogam');
+
+
 
 });
 
@@ -425,6 +433,7 @@ $("#js-crop-and-upload_3").click(function () {
   $("#id_y_3").val(cropData["y"]);
   $("#id_height_3").val(cropData["height"]);
   $("#id_width_3").val(cropData["width"]);
+
   $("#modalCrop_3").modal("hide");
 
 });

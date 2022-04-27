@@ -182,6 +182,13 @@
     });
     $('#id_category_name').keypress(function() {
     var dInput = this.value;
+    dInput = dInput.replace(/\s+/g, '')
+    $('#id_category_slug').val(dInput)
+    });
+
+    $('#id_category_slug').keypress(function() {
+    var dInput = this.value;
+    dInput = dInput.replace(/\s+/g, '')
     $('#id_category_slug').val(dInput)
     });
      // this is for the cofirmation on the delete button
