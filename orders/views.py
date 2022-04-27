@@ -198,6 +198,8 @@ def razorpay_payment(request):
         return client.utility.verify_payment_signature(response_data)
 
     if "razorpay_signature" in request.POST:
+
+
         payment_id = request.POST.get("razorpay_payment_id", "")
         provider_order_id = request.POST.get("razorpay_order_id", "")
         signature_id = request.POST.get("razorpay_signature", "")
@@ -206,13 +208,46 @@ def razorpay_payment(request):
         order = Order.objects.get(order_number=razor_pay.order.order_number)
         
         if verify_signature(request.POST):
-
-
+            cart_items = CartItems.objects.filter(user=request.user)
+            payments = Payment()
+            payments.user= request.user
+            payments.payment_id = order.order_number
+            payments.payment_method = 'RAZOR PAY'
+            payments.amount = order.order_total
+            payments.status = 'COMPLETED'
+            payments.save()
+            order.payment = payments
+            order.is_ordered = True
+            order.save()
+            order.save()
             request.session['order_id'] = order.order_number
 
 
+            for items in cart_items:
 
-            return redirect('razor_pay_success')
+                order_product = OrderProduct()
+                order_product.order = order
+                order_product.payment = payments
+                order_product.user =  items.user
+                order_product.product =items.product
+                order_product.quantity = items.quantity 
+                order_product.product_price = items.product.price
+                order_product.ordered = True
+                order_product.save()
+
+                    # product stock reduce 
+                product = Product.objects.get(id=items.product.id)
+                product.stock = product.stock - items.quantity
+
+                    # checking the stock of the product
+                if product.stock < 0:
+                    product.stock= 0 
+                    product.is_available=False
+
+                product.save()
+                # deleteing the product from the cartitems
+                items.delete()
+            return redirect('payment_success')
         else:
             messages.error(request, 'Sorry The payment Failed! try again ')
             return redirect('payments',order_id=order.order_number)
@@ -224,47 +259,6 @@ def razorpay_payment(request):
 def payment_canceled(request):
     return render(request, 'home/error.html')
 
-def razor_pay_success_view(request):
-
-    cart_items = CartItems.objects.filter(user=request.user)
-    order_id = request.session.get('order_id')
-    order = Order.objects.get(order_number=order_id)
-    payments = Payment()
-    payments.user= request.user
-    payments.payment_id = order.order_number
-    payments.payment_method = 'RAZOR PAY'
-    payments.amount = order.order_total
-    payments.status = 'COMPLETED'
-    payments.save()
-    order.payment = payments
-    order.is_ordered = True
-    order.save()
-    order.save()
-    for items in cart_items:
-
-        order_product = OrderProduct()
-        order_product.order = order
-        order_product.payment = payments
-        order_product.user =  items.user
-        order_product.product =items.product
-        order_product.quantity = items.quantity 
-        order_product.product_price = items.product.price
-        order_product.ordered = True
-        order_product.save()
-
-                    # product stock reduce 
-        product = Product.objects.get(id=items.product.id)
-        product.stock = product.stock - items.quantity
-
-                    # checking the stock of the product
-        if product.stock < 0:
-            product.stock= 0 
-            product.is_available=False
-
-        product.save()
-                # deleteing the product from the cartitems
-        items.delete()
-        return redirect('payment_success')
 
 
 

@@ -24,7 +24,7 @@ urlpatterns = [
     # razor pay call back means after the success ful payment redirect to this view
     path("razor_pay_payment/", views.razorpay_payment, name="razor_pay_payment"),
     path("return_order/<str:order_id>/", views.return_order_view, name="return_order"),
-    path("razor_pay_success", views.razor_pay_success_view, name="razor_pay_success"),
+  
     
 
 
