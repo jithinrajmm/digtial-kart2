@@ -129,6 +129,47 @@
         </div>
       </div>
 
+                  <!-- paginator view -->
+                  <div class="col-12">
+                    <nav>
+                      <ul class="pagination justify-content-center">
+                          {% if orders.has_other_pages %}
+                            
+                            <!-- this is for the previous page -->
+                            {% if orders.has_previous %}
+                            <li class=""><a class="btn  active page-link" href="?page={{orders.previous_page_number}}" style="background-color: rgb(255,211,51);color: black;">&laquo; Prev</span></a></li>
+                            {% else %}
+                            <li class=""><a class="btn disabled  page-link" style="color: black;" href="#">&laquo; Prev </span></a></li>
+                            {% endif %}
+            
+                            <!-- this is for the all pages available in the paginator -->
+                            {% for page in  orders.paginator.page_range %}
+            
+                                {% if orders.number == page %}
+                                
+                                <!-- this is for activation of current page -->
+                                <li class=""><a class="page-link btn   active" href="#" style="background-color: rgb(255,211,51); color: black;">{{page}} </a></li>
+            
+                                {% else %}
+                                <!-- its for the linking each pages which is not current page -->
+                                <li class="" ><a class="page-link btn " style="color: black;" href="?page={{page}}">{{page}}</a></li>
+                                {% endif %}
+                            
+                            {% endfor %}
+            
+                            <!-- this is for the next page number -->
+                            {% if orders.has_next %}
+                            <li class=""><a class="btn active  page-link" style="background-color: rgb(255,211,51); color: black;" href="?page={{orders.next_page_number}}">Next &raquo;</a></li>
+                            {% else %}
+                            <li class=""><a class="active disabled page-link" style="color: black;" href="#">Next &raquo;</a></li>
+                            {% endif %}
+            
+                        {% endif %}
+                      </ul>
+                    </nav>
+                </div>
+                <!-- paginator end herer -->
+
         
     </div>
     {% include "base/footer.html" %}

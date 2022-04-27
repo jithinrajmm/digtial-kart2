@@ -438,6 +438,10 @@ def category_edit(request,id):
 def order_management_view(request):
 
     orders = Order.objects.all()
+    user_paginator = Paginator(orders,5)
+    page_number = request.GET.get('page')
+    orders = user_paginator.get_page(page_number)
+
     order_products = OrderProduct.objects.all()
     context = {
                 'orders': orders,
