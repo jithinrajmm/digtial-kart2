@@ -187,10 +187,10 @@ ACCOUNT_SID = config('account_sid')
 AUTH_TOKEN = config('auth_token')
 MESSAGING_SERVICE_SID = config('messaging_service_sid')
 
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SAMESITE = 'None'
-# SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
 CSRF_TRUSTED_ORIGINS= ['http://3.108.51.168/','http://ec2-3-108-51-168.ap-south-1.compute.amazonaws.com']
 
 # smtp configruations
