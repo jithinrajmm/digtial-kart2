@@ -87,7 +87,8 @@ def userRegister(request):
            new_user.is_active = True
            new_user.username = username
            new_user.save()
-           return redirect('user_login')
+           login(request, new_user)
+           return redirect('home')
 
     return render(request,'accounts/userregister.html',{'creationForms':forms})
 
